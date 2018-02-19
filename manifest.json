@@ -1,0 +1,7 @@
+{
+  "name": "ocean-eye",
+  "short_name": "ocean-eye",
+  "description": "Startup Radiator dashboard based on Ocean Eye Model",
+  "start_url": "/",
+  "display": "standalone"
+}

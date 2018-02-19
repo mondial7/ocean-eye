@@ -1,0 +1,158 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/ocean-eye-bubbles/ocean-eye-bubbles.html">
+<link rel="import" href="../../bower_components/ocean-eye-bubble/ocean-eye-bubble.html">
+
+
+<dom-module id="ocean-eye-app">
+  <template>
+    <style>
+      *, :host {
+        box-sizing: border-box;
+      }
+      :host {
+        display: block;
+        position: relative;
+        height: 100%;
+        width: 100%;
+        padding: 10px;
+        background-color: #fefefe;
+      }
+      ocean-eye-bubbles {
+        --voicelister-button-position: center;
+        position: relative;
+        height: 100%;
+        width: 100%;
+        background-color: #fefefe;
+      }
+      ocean-eye-bubbles ::slotted {
+        text-align: center;
+      }
+      ocean-eye-bubble {
+        background-color: #fefefe;
+        margin: 15px;
+      }
+    </style>
+
+    <ocean-eye-bubbles voicelistener voicelistener-api-key="your-cloud-speech-api-key">
+
+      <ocean-eye-bubble color="orange" counter="6">
+        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
+          <h1 style="font-size:45px">87%</h1>
+          <p>Anything you like</p>
+        </div>
+      </ocean-eye-bubble>
+
+      <ocean-eye-bubble color="orange" counter="10" spread>
+        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
+          <h1 style="font-size:45px">87%</h1>
+          <p>Anything you like</p>
+        </div>
+      </ocean-eye-bubble>
+
+      <ocean-eye-bubble color="orange" counter="16" id="vision">
+        <div style="text-align:center;color:#444;font-family:Arial,san-serif;font-weight:900;font-size:24px;">
+          <p>We help startup<br>to understand themselves</p>
+        </div>
+      </ocean-eye-bubble>
+
+      <br>
+
+      <ocean-eye-bubble color="orange" spread>
+        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
+          <h1 style="font-size:45px">87%</h1>
+          <p>Anything you like</p>
+        </div>
+      </ocean-eye-bubble>
+
+      <ocean-eye-bubble color="orange" counter="12">
+        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
+          <h1 style="font-size:45px">87%</h1>
+          <p>Anything you like</p>
+        </div>
+      </ocean-eye-bubble>
+
+      <ocean-eye-bubble color="orange" counter="30">
+        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
+          <h1 style="font-size:45px">87%</h1>
+          <p>Anything you like</p>
+        </div>
+      </ocean-eye-bubble>
+
+    </ocean-eye-bubbles>
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class OceanEyeApp extends Polymer.Element {
+      static get is() { return 'ocean-eye-app'; }
+      // static get properties() {
+      //   return {
+      //
+      //   };
+      // }
+      ready(){
+        super.ready()
+        // bubbles toggle for demo
+        let bubbles = this.root.querySelectorAll('ocean-eye-bubble')
+        for (let i = 0; i < bubbles.length; i++) {
+          bubbles[i].onclick = function(){ this.togglePosition() }
+          // setTimeout(() => { setInterval(() => {
+          //   bubbles[i].togglePosition()
+          // }, 1500) }, 1000*(i+1))
+        }
+        // set dictionary
+        let bubblesWrapper = this.root.querySelector('ocean-eye-bubbles')
+        bubblesWrapper.dictionary = [
+          {
+            trigger: 'marketing view',
+            event: 'marketing-view',
+            answer: 'Showing the marketing view'
+          },
+          {
+            trigger: 'vision',
+            event: 'vision-view',
+            answer: 'Showing the vision of your startup'
+          },
+          {
+            trigger: 'home',
+            event: 'home-view',
+            answer: 'Going back home'
+          },
+          {
+            trigger: 'all',
+            event: 'home-view',
+            answer: 'Going back home'
+          }
+        ]
+        // add event listeners
+        bubblesWrapper.addEventListener('vision-view', e => {
+          // focus on vision only
+          for (let i = 0; i < bubbles.length; i++) {
+            if (bubbles[i].getAttribute('id') === 'vision') bubbles[i].show()
+            else bubbles[i].hide()
+          }
+        })
+        bubblesWrapper.addEventListener('home-view', e => {
+          // focus on vision only
+          for (let i = 0; i < bubbles.length; i++) {
+            bubbles[i].show()
+          }
+        })
+      }
+      /**
+       * Focus on one metric
+       *
+       */
+      focusOn(){
+        // ...
+      }
+
+    }
+
+    window.customElements.define(OceanEyeApp.is, OceanEyeApp);
+  </script>
+</dom-module>
