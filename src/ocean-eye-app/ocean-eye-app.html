@@ -15,66 +15,66 @@
         height: 100%;
         width: 100%;
         padding: 10px;
-        background-color: #fefefe;
+      }
+      :host,
+      ocean-eye-bubbles,
+      ocean-eye-bubble {
+        background-color: #f4f4f4;
       }
       ocean-eye-bubbles {
         --voicelister-button-position: center;
         position: relative;
         height: 100%;
         width: 100%;
-        background-color: #fefefe;
       }
       ocean-eye-bubbles ::slotted {
         text-align: center;
       }
       ocean-eye-bubble {
-        background-color: #fefefe;
         margin: 15px;
+        --bubble-size: 320px;
+      }
+      ocean-eye-bubble > div {
+        text-align: center;
+        color: #444;
+        font-family: Arial, sans-serif;
       }
     </style>
 
-    <ocean-eye-bubbles voicelistener voicelistener-api-key="your-cloud-speech-api-key">
+    <ocean-eye-bubbles voicelistener>
 
-      <ocean-eye-bubble color="orange" counter="6">
-        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
-          <h1 style="font-size:45px">87%</h1>
-          <p>Anything you like</p>
+      <ocean-eye-bubble counter="6">
+        <div>
+          <h1>412</h1>
+          <p>Users visiting us this week</p>
         </div>
       </ocean-eye-bubble>
 
-      <ocean-eye-bubble color="orange" counter="10" spread>
-        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
-          <h1 style="font-size:45px">87%</h1>
-          <p>Anything you like</p>
-        </div>
-      </ocean-eye-bubble>
-
-      <ocean-eye-bubble color="orange" counter="16" id="vision">
-        <div style="text-align:center;color:#444;font-family:Arial,san-serif;font-weight:900;font-size:24px;">
+      <ocean-eye-bubble counter="16" class="vision-view">
+        <div style="font-weight:900;font-size:24px;">
           <p>We help startup<br>to understand themselves</p>
         </div>
       </ocean-eye-bubble>
 
       <br>
 
-      <ocean-eye-bubble color="orange" spread>
-        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
-          <h1 style="font-size:45px">87%</h1>
-          <p>Anything you like</p>
+      <ocean-eye-bubble>
+        <div>
+          <h1>18</h1>
+          <p>New active users!</p>
         </div>
       </ocean-eye-bubble>
 
-      <ocean-eye-bubble color="orange" counter="12">
-        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
-          <h1 style="font-size:45px">87%</h1>
-          <p>Anything you like</p>
+      <ocean-eye-bubble counter="10">
+        <div>
+          <h1 style="color:green">+10%</h1>
+          <p>Revenues/Costs</p>
         </div>
       </ocean-eye-bubble>
 
-      <ocean-eye-bubble color="orange" counter="30">
-        <div style="text-align:center;color:#888;font-family:Arial,san-serif;">
-          <h1 style="font-size:45px">87%</h1>
-          <p>Anything you like</p>
+      <ocean-eye-bubble counter="16" id="crash">
+        <div>
+          <h1 style="color:red">System is down!!!</h1>
         </div>
       </ocean-eye-bubble>
 
@@ -96,9 +96,19 @@
       // }
       ready(){
         super.ready()
-        // bubbles toggle for demo
+        // NOTE demo system not reachable
+        this.root.getElementById('crash').hide()
+        // get all bubbles available
         let bubbles = this.root.querySelectorAll('ocean-eye-bubble')
+        this.bubbles = bubbles
         for (let i = 0; i < bubbles.length; i++) {
+          // color bubbles
+          bubbles[i].color = 'orange'
+          // spread all bubbles
+          bubbles[i].spread = true
+          // add default classname
+          bubbles[i].classList.add('home-view')
+          // bubbles toggle for demo
           bubbles[i].onclick = function(){ this.togglePosition() }
           // setTimeout(() => { setInterval(() => {
           //   bubbles[i].togglePosition()
@@ -106,6 +116,7 @@
         }
         // set dictionary
         let bubblesWrapper = this.root.querySelector('ocean-eye-bubbles')
+        this.bubblesWrapper = bubblesWrapper
         bubblesWrapper.dictionary = [
           {
             trigger: 'marketing view',
@@ -128,27 +139,35 @@
             answer: 'Going back home'
           }
         ]
-        // add event listeners
-        bubblesWrapper.addEventListener('vision-view', e => {
-          // focus on vision only
-          for (let i = 0; i < bubbles.length; i++) {
-            if (bubbles[i].getAttribute('id') === 'vision') bubbles[i].show()
-            else bubbles[i].hide()
+        // register basic custom-event listeners
+        this._registerCustomEventListeners()
+        // NOTE demo --> system not reachable
+        setInterval(() => {
+          for (var i = 0; i < this.bubbles.length; i++) {
+            this.bubbles[i].toggle()
           }
-        })
-        bubblesWrapper.addEventListener('home-view', e => {
-          // focus on vision only
-          for (let i = 0; i < bubbles.length; i++) {
-            bubbles[i].show()
-          }
-        })
+        }, 4000)
       }
       /**
        * Focus on one metric
        *
+       * @param String classname target
        */
-      focusOn(){
-        // ...
+      focusOn(target){
+        for (let i = 0; i < this.bubbles.length; i++) {
+          if (this.bubbles[i].classList.contains(target)) this.bubbles[i].show()
+          else this.bubbles[i].hide()
+        }
+      }
+      /**
+       * Register all defined custom event listener
+       * NOTE this listeners can be extended
+       */
+      _registerCustomEventListeners() {
+        let dictionary = this.bubblesWrapper.dictionary
+        for (let i = 0; i < dictionary.length; i++) {
+          this.bubblesWrapper.addEventListener(dictionary[i].event, e => this.focusOn(e.type))
+        }
       }
 
     }
