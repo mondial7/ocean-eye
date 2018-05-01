@@ -1,0 +1,129 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="ocean-api">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+
+    <iron-ajax
+      id="request"
+      url="[[OceanEye.API_HOST]][[endpoint]]"
+      method="[[method]]"
+      loading="{{loading}}"
+      handle-as="json"
+      on-response="_handleResponse"></iron-ajax>
+
+  </template>
+
+  <script>
+    class OceanApi extends Polymer.Element {
+      static get is() { return 'ocean-api'; }
+      static get properties() {
+        return {
+          /**
+           * Endpoint
+           * @type {String}
+           */
+          endpoint: String,
+          /**
+           * Parameters
+           * @type {Object} json
+           */
+          params: Object,
+          /**
+           * Request method
+           * @type {String} enum 'GET','POST','PUT','DELETE'
+           */
+          method: {
+            type: String,
+            value: 'GET',
+            observer: '_validateMethod',
+          },
+          /**
+           * Track progress of request
+           * @type {Object}
+           */
+          progress: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true,
+          },
+          /**
+           * Response
+           * @type {Object}
+           */
+          response: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true,
+          },
+        }
+      }
+      /**
+       * Observers of multiple properties
+       */
+      static get observers() {
+        return [
+          '_paramsMethodChanged(params, method)'
+        ]
+      }
+      /**
+       * Invoke parameters checks
+       */
+      ready() {
+        super.ready()
+        this._paramsMethodChanged(this.params, this.method)
+      }
+      /**
+       * Perform ajax request
+       * @param {void}
+       */
+      execute() {
+        this.$.request.generateRequest()
+      }
+      /**
+       * Validate method value on changes
+       * simulate Enum type
+       *
+       * @param {String} method
+       * @param {String} old method
+       * @return {String}
+       */
+      _validateMethod(m, oldMethod) {
+        return ['GET','POST','PUT','DELETE'].indexOf(m) === -1 ? 'GET' : m
+      }
+      /**
+       * Set parameters to ajax request
+       * according to method
+       *
+       * @param {Object} params
+       * @param {String} method
+       */
+      _paramsMethodChanged(params, method) {
+        if (!this.$.request || !params) return
+        // assign parameters to ajax request
+        if (method === 'POST') {
+          this.$.request.contentType = 'application/json'
+          this.$.request.body = params
+        } else {
+          this.$.request.params = params
+        }
+      }
+      /**
+       * Handle last callback response
+       *
+       * @param {JSON}
+       */
+      _handleResponse(response) {
+        this.response = response
+      }
+
+    }
+
+    window.customElements.define(OceanApi.is, OceanApi);
+  </script>
+</dom-module>

@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="ocean-eye-app">
+  <template>
+    <style>
+      *, :host {
+        box-sizing: border-box;
+        padding: 10px;
+      }
+      :host {
+        display: block;
+        font-family: 'Roboto', Arial, sans-serif;
+      }
+      h1 {
+        color: #333;
+      }
+      paper-button {
+        background-color: lime;
+        color: white;
+      }
+      paper-button[active] {
+        background-color: red;
+      }
+    </style>
+
+    <firebase-app
+      auth-domain="ocean-eye-1519134593391.firebaseapp.com"
+      database-url="https://ocean-eye-1519134593391.firebaseio.com"
+      api-key="AIzaSyAegRipkyYJt-Ltnjp9VS6tq5BzBQFzEzY"
+      storage-bucket="ocean-eye-1519134593391.appspot.com"
+      messaging-sender-id="455953769993">
+    </firebase-app>
+
+    <firebase-auth
+      id="auth"
+      user="{{user}}"
+      provider="google"
+      status-known="{{statusKnown}}"
+      on-error="handleError">
+    </firebase-auth>
+
+    <h1>Ocean Eye</h1>
+
+    <paper-button toggles raised on-click="toggleSignIn">{{signMessage}}</paper-button>
+
+
+    <dom-if>
+
+    </dom-if>
+
+  </template>
+
+  <script>
+    class OceanEyeApp extends Polymer.Element {
+      static get is() { return 'ocean-eye-app'; }
+      static get properties() {
+        return {
+          /**
+           * User logged status
+           * @type {Boolean}
+           */
+          isLogged: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * Label of sign in button
+           * @type {String}
+           */
+          signMessage: {
+            type: String,
+            value: 'Sign in',
+          }
+        }
+      }
+      ready(){
+        super.ready()
+        console.log(this.user)
+      }
+      toggleSignIn() {
+        if (this.isLogged) {
+          this.$.auth.signOut().then(response => {
+            console.log(response);
+            this.signMessage = 'Sign in'
+            this.isLogged = false
+          })
+        } else {
+          this.$.auth.signInWithPopup().then(response => {
+            console.log(response);
+            this.signMessage = 'Sign out'
+            this.isLogged = true
+          })
+        }
+        console.log(this.user)
+      }
+      handleError(error){
+        console.log(error);
+      }
+    }
+
+    window.customElements.define(OceanEyeApp.is, OceanEyeApp);
+  </script>
+</dom-module>

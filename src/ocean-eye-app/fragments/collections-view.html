@@ -1,0 +1,132 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../helpers/ocean-api.html">
+
+<dom-module id="collections-view">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      /* TODO toggle view according to subrouter value */
+      .collection_view__wrapper {
+        display: none;
+      }
+      #fabWrapper {
+        position: fixed;
+        right: var(--page-padding, 15px);
+        bottom: var(--page-padding, 15px);
+      }
+    </style>
+
+    <ocean-api
+      id="collectionListApi"
+      endpoint="collections/list"
+      response="{{collections}}"></ocean-api>
+    <ocean-api
+      id="collectionDataApi"
+      endpoint="collections/read"
+      params='{"id":"[[collectionID]]"}'
+      response="{{collections}}"></ocean-api>
+
+    <section class="collections__wrapper">
+      <iron-list>
+        <dom-repeat for="{{collections}}" as="collection">
+          <iron-selector
+            attr-for-selected="data-id"
+            selected="{{collectionId}}">
+            <paper-item data-id="[[collection.id]]">
+              <!-- <div class="collection_card__footer">
+                <paper-button raised on-click="thumbUp([[collection.id]])">
+                  <iron-icon icon="thumb-up"></iron-icon> [[likes]]
+                </paper-button>
+              </div> -->
+              <paper-item-body two-line>
+                <div>[[collection.owner]]</div>
+                <div secondary>[[collection.date]]</div>
+              </paper-item-body>
+              <!-- TODO add events to load the page  -->
+              <!-- <iron-icon icon="favorite"></iron-icon> -->
+            </paper-item>
+          </iron-selector>
+        </dom-repeat>
+      </iron-list>
+      <!-- TODO adapt to use the router -->
+      <a href="[[basePath]]/new" id="fabWrapper">
+        <paper-fab icon="add"></paper-fab>
+      </a>
+    </section>
+
+    <section class="collection_view__wrapper">
+      <paper-button on-click="_showList()">Back</paper-button>
+    </section>
+
+  </template>
+
+  <script>
+    class CollectionsView extends Polymer.Element {
+      static get is() { return 'collections-view'; }
+      static get properties() {
+        return {
+          /**
+           * Collections list
+           * @type {Array}
+           */
+          collections: {
+            type: Object,
+            value: () => [],
+          },
+          /**
+           * Collection selected
+           * @type {Array}
+           */
+          collection: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true,
+          },
+          /**
+           * Collection ID
+           * @type {Number}
+           */
+          collectionID: {
+            type: Number,
+            observer: '_collectionSelected'
+          }
+        }
+      }
+      /**
+       * Execute query, retrieve list of all collections
+       */
+      ready(){
+        super.ready()
+        this.$.collectionListApi.execute()
+      }
+      /**
+       * Observer for collectionID property
+       * @param {Number}
+       * @param {Number}
+       */
+      _collectionSelected(id, oldId) {
+        // execute query to retrieve collection data
+        console.log(this.$.collectionDataApi.params); // TODO dev only
+        this.$.collectionDataApi.execute()
+      }
+      /**
+       * Force list view
+       * delete colection data
+       */
+      _showList() {
+        this.collection = null
+      }
+    }
+
+    window.customElements.define(CollectionsView.is, CollectionsView);
+  </script>
+</dom-module>

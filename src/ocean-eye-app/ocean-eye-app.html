@@ -1,175 +1,205 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/ocean-eye-bubbles/ocean-eye-bubbles.html">
-<link rel="import" href="../../bower_components/ocean-eye-bubble/ocean-eye-bubble.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
+<!-- TODO lazy import -> prpl pattern -->
+<link rel="import" href="fragments/collections-view.html">
 
 <dom-module id="ocean-eye-app">
   <template>
     <style>
       *, :host {
         box-sizing: border-box;
-      }
-      :host {
-        display: block;
-        position: relative;
-        height: 100%;
-        width: 100%;
         padding: 10px;
       }
-      :host,
-      ocean-eye-bubbles,
-      ocean-eye-bubble {
-        background-color: #f4f4f4;
+
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        display: block;
+        font-family: 'Roboto', Arial, sans-serif;
       }
-      ocean-eye-bubbles {
-        --voicelister-button-position: center;
-        position: relative;
-        height: 100%;
-        width: 100%;
+
+      h1 {
+        color: #333;
       }
-      ocean-eye-bubbles ::slotted {
-        text-align: center;
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
       }
-      ocean-eye-bubble {
-        margin: 15px;
-        --bubble-size: 320px;
-      }
-      ocean-eye-bubble > div {
-        text-align: center;
-        color: #444;
-        font-family: Arial, sans-serif;
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
       }
     </style>
 
-    <ocean-eye-bubbles voicelistener>
+    <app-location
+        route="{{route}}"
+        url-space-regex="^[[rootPath]]">
+    </app-location>
 
-      <ocean-eye-bubble counter="6">
-        <div>
-          <h1>412</h1>
-          <p>Users visiting us this week</p>
-        </div>
-      </ocean-eye-bubble>
+    <app-route
+        route="{{route}}"
+        pattern="[[rootPath]]:page"
+        data="{{routeData}}"
+        tail="{{subroute}}">
+    </app-route>
 
-      <ocean-eye-bubble counter="16" class="vision-view">
-        <div style="font-weight:900;font-size:24px;">
-          <p>We help startup<br>to understand themselves</p>
-        </div>
-      </ocean-eye-bubble>
+    <app-route
+        route="{{subroute}}"
+        pattern="/:subpage"
+        data="{{subrouteData}}">
+    </app-route>
 
-      <br>
+    <app-header-layout fullbleed>
 
-      <ocean-eye-bubble>
-        <div>
-          <h1>18</h1>
-          <p>New active users!</p>
-        </div>
-      </ocean-eye-bubble>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <div main-title>Ocean Eye</div>
+          <div class="">
+            <paper-icon-button icon="profile" on-tap="_hello"></paper-icon-button>
+            <paper-icon-button icon="logout"></paper-icon-button>
+          </div>
+        </app-toolbar>
+        <!-- <paper-tabs selected="{{page}}" attr-for-selected='name' role="navigation">
+          <paper-tab name="projects" on-click="_backToProjectsList">Projects</paper-tab>
+          <paper-tab name="profile">Profile</paper-tab>
+          <paper-tab name="settings">Settings</paper-tab>
+        </paper-tabs> -->
+      </app-header>
 
-      <ocean-eye-bubble counter="10">
-        <div>
-          <h1 style="color:green">+10%</h1>
-          <p>Revenues/Costs</p>
-        </div>
-      </ocean-eye-bubble>
+      <iron-pages
+          selected="[[page]]"
+          attr-for-selected="name"
+          fallback-selection="my-404"
+          role="main">
+        <collections-view
+          name="collections"
+          collection="{{collection}}"></collections-view>
+        <settings-view name="settings"></settings-view>
+        <my-404-view name="my-404"></my-404-view>
+      </iron-pages>
 
-      <ocean-eye-bubble counter="16" id="crash">
-        <div>
-          <h1 style="color:red">System is down!!!</h1>
-        </div>
-      </ocean-eye-bubble>
-
-    </ocean-eye-bubbles>
+    </app-header-layout>
 
   </template>
 
   <script>
+
     /**
-     * @customElement
-     * @polymer
+     * Application wide constants
+     *
      */
+    const PAGE = {
+      /**
+       * @type {String}
+       */
+      COLLECTIONS: 'collections',
+      /**
+       * @type {String}
+       */
+      PLAY: 'play',
+      /**
+       * @type {String}
+       */
+      PROFILE: 'profile',
+    }
+
     class OceanEyeApp extends Polymer.Element {
       static get is() { return 'ocean-eye-app'; }
-      // static get properties() {
-      //   return {
-      //
-      //   };
-      // }
-      ready(){
-        super.ready()
-        // NOTE demo system not reachable
-        this.root.getElementById('crash').hide()
-        // get all bubbles available
-        let bubbles = this.root.querySelectorAll('ocean-eye-bubble')
-        this.bubbles = bubbles
-        for (let i = 0; i < bubbles.length; i++) {
-          // color bubbles
-          bubbles[i].color = 'orange'
-          // spread all bubbles
-          bubbles[i].spread = true
-          // add default classname
-          bubbles[i].classList.add('home-view')
-          // bubbles toggle for demo
-          bubbles[i].onclick = function(){ this.togglePosition() }
-          // setTimeout(() => { setInterval(() => {
-          //   bubbles[i].togglePosition()
-          // }, 1500) }, 1000*(i+1))
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          },
+          routeData: Object,
+          subrouteData: Object,
+          subroute: String,
+          rootPath: String, // Polymer.Element#rootPath
+          /**
+           * Collection selected (detected by subrouter)
+           * @type {String}
+           */
+          collection: {
+            type: String,
+            value: '',
+          }
         }
-        // set dictionary
-        let bubblesWrapper = this.root.querySelector('ocean-eye-bubbles')
-        this.bubblesWrapper = bubblesWrapper
-        bubblesWrapper.dictionary = [
-          {
-            trigger: 'marketing view',
-            event: 'marketing-view',
-            answer: 'Showing the marketing view'
-          },
-          {
-            trigger: 'vision',
-            event: 'vision-view',
-            answer: 'Showing the vision of your startup'
-          },
-          {
-            trigger: 'home',
-            event: 'home-view',
-            answer: 'Going back home'
-          },
-          {
-            trigger: 'all',
-            event: 'home-view',
-            answer: 'Going back home'
-          }
-        ]
-        // register basic custom-event listeners
-        this._registerCustomEventListeners()
-        // NOTE demo --> system not reachable
-        setInterval(() => {
-          for (var i = 0; i < this.bubbles.length; i++) {
-            this.bubbles[i].toggle()
-          }
-        }, 4000)
       }
       /**
-       * Focus on one metric
+       * Complex observers
+       * (multi properties & property attributes)
+       */
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+          '_subrouteChanged(subrouteData.subpage)',
+        ];
+      }
+      /**
+       * Router observer
        *
-       * @param String classname target
+       * @param {String} page
        */
-      focusOn(target){
-        for (let i = 0; i < this.bubbles.length; i++) {
-          if (this.bubbles[i].classList.contains(target)) this.bubbles[i].show()
-          else this.bubbles[i].hide()
+      _routePageChanged(page) {
+        // fallback to collections view on first loading
+        this.page = page || PAGE.COLLECTIONS;
+
+        // NOTE patch to reset the potentially selected collection
+        // See: /fragments/collections-view.html
+        if (this.subroute.path === ''
+            && this.subroute.prefix === `/${PAGE.COLLECTIONS}`
+            || page !== PAGE.COLLECTIONS) {
+          this.collection = ''
         }
       }
       /**
-       * Register all defined custom event listener
-       * NOTE this listeners can be extended
+       * Listen to subroute
+       *
+       * @param {String} subpage
        */
-      _registerCustomEventListeners() {
-        let dictionary = this.bubblesWrapper.dictionary
-        for (let i = 0; i < dictionary.length; i++) {
-          this.bubblesWrapper.addEventListener(dictionary[i].event, e => this.focusOn(e.type))
+      _subrouteChanged(subpage) {
+        // update selected collection to be propagated in collections-view
+        if (this.page === PAGE.COLLECTIONS) {
+          this.collections = subpage
         }
       }
-
+      /**
+       * Listen to page changes
+       * Load fragment and save history state to enable
+       * browser back/history button
+       *
+       * @param {String} page
+       */
+      _pageChanged(page) {
+        Polymer.importHref(
+            this._resolvedPageUrl(this.page),
+            null,
+            null,// e.g. this._showPage404.bind(this),
+            true)
+        // Push state
+        window.history.pushState({}, null, this.page)
+        window.dispatchEvent(new CustomEvent('location-changed'))
+      }
+      /**
+       * Map page value with fragment url path
+       * @param {String} page
+       * @return {String} url (relative)
+       */
+      _resolvedPageUrl(page) {
+        // fallback on collections when page is not recognised
+        switch (page) {
+          case PAGE.PROFILE:
+          case PAGE.PLAY:
+            break;
+          case PAGE.COLLECTIONS:
+          default:
+            page = PAGE.COLLECTIONS
+        }
+        return this.resolveUrl(`fragments/${page}-view.html`)
+      }
     }
 
     window.customElements.define(OceanEyeApp.is, OceanEyeApp);
