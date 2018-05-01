@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="ocean-eye-informationitem">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        display: inline-block;
+        max-width: var(--informationitem-max-width, 200px);
+        max-height: var(--informationitem-max-height, 300px);
+      }
+      :host([disabled]) {
+        opacity: 0.7;
+      }
+      :host([summary]) .extra {
+        display: none;
+      }
+      h3 {
+        color: var(--informationitem-color, black);
+        background-color: var(--informationitem-background, whitesmoke);
+        padding: 10px;
+        word-spacing: normal;
+      }
+    </style>
+
+    <div class="">
+      <h3>[[info.name]]</h3>
+      <div class="extra">
+        ...
+        <!-- TODO section used by second activity of 'play' -->
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class OceanEyeInformationitem extends Polymer.Element {
+      static get is() { return 'ocean-eye-informationitem'; }
+      static get properties() {
+        return {
+          /**
+           * Information item
+           * @type {Object}
+           */
+          info: Object,
+          /**
+           * Summary view switcher
+           * @type {Boolean}
+           */
+          summary: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * Styling property
+           * @type {Boolean}
+           */
+          disabled: {
+            type: Boolean,
+            value: false,
+          },
+        }
+      }
+    }
+
+    window.customElements.define(OceanEyeInformationitem.is, OceanEyeInformationitem);
+  </script>
+</dom-module>

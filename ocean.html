@@ -11,6 +11,16 @@
     <link rel="manifest" href="/manifest.json">
 
     <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <script>
+      window.Polymer = {
+        rootPath: '/'
+      };
+    </script>
+
+    <link rel="import" href="/bower_components/polymer/lib/utils/settings.html">
+    <script>
+      Polymer.setPassiveTouchGestures(true);
+    </script>
 
     <link rel="import" href="/src/ocean-eye-app/ocean-eye-app.html">
 

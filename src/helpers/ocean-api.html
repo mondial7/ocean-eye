@@ -116,10 +116,10 @@
       /**
        * Handle last callback response
        *
-       * @param {JSON}
+       * @param {Object} iron-request
        */
-      _handleResponse(response) {
-        this.response = response
+      _handleResponse(req) {
+        this.response = req.detail.response
       }
 
     }

@@ -1,5 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <!-- TODO lazy import -> prpl pattern -->
 <link rel="import" href="fragments/collections-view.html">
@@ -9,27 +14,27 @@
     <style>
       *, :host {
         box-sizing: border-box;
-        padding: 10px;
       }
 
       :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
+        --app-primary-color: darkslateblue;
+        --app-negative-color: whitesmoke;
+        --page-padding: 15px;
         display: block;
         font-family: 'Roboto', Arial, sans-serif;
       }
 
-      h1 {
-        color: #333;
-      }
-
       app-header {
-        color: #fff;
+        color: var(--app-negative-color);
         background-color: var(--app-primary-color);
       }
 
       app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
+        --paper-icon-button-ink-color: var(--app-negative-color);
+      }
+
+      iron-pages {
+        padding: var(--page-padding);
       }
     </style>
 
@@ -37,50 +42,37 @@
         route="{{route}}"
         url-space-regex="^[[rootPath]]">
     </app-location>
-
     <app-route
         route="{{route}}"
         pattern="[[rootPath]]:page"
         data="{{routeData}}"
         tail="{{subroute}}">
     </app-route>
-
     <app-route
         route="{{subroute}}"
         pattern="/:subpage"
         data="{{subrouteData}}">
     </app-route>
 
-    <app-header-layout fullbleed>
+    <app-header slot="header">
+      <app-toolbar>
+        <div main-title>Ocean Eye</div>
+        <iron-selector attr-for-selected="icon" selected="{{page}}">
+          <paper-icon-button icon="profile"></paper-icon-button>
+          <paper-icon-button icon="logout"></paper-icon-button>
+        </iron-selector>
+      </app-toolbar>
+    </app-header>
 
-      <app-header slot="header" condenses reveals effects="waterfall">
-        <app-toolbar>
-          <div main-title>Ocean Eye</div>
-          <div class="">
-            <paper-icon-button icon="profile" on-tap="_hello"></paper-icon-button>
-            <paper-icon-button icon="logout"></paper-icon-button>
-          </div>
-        </app-toolbar>
-        <!-- <paper-tabs selected="{{page}}" attr-for-selected='name' role="navigation">
-          <paper-tab name="projects" on-click="_backToProjectsList">Projects</paper-tab>
-          <paper-tab name="profile">Profile</paper-tab>
-          <paper-tab name="settings">Settings</paper-tab>
-        </paper-tabs> -->
-      </app-header>
-
-      <iron-pages
-          selected="[[page]]"
-          attr-for-selected="name"
-          fallback-selection="my-404"
-          role="main">
-        <collections-view
-          name="collections"
-          collection="{{collection}}"></collections-view>
-        <settings-view name="settings"></settings-view>
-        <my-404-view name="my-404"></my-404-view>
-      </iron-pages>
-
-    </app-header-layout>
+    <iron-pages
+        selected="[[page]]"
+        attr-for-selected="name">
+      <collections-view
+        name="collections"
+        collection="{{collection}}"></collections-view>
+      <profile-view name="settings"></profile-view>
+      <play-view name="play"></play-view>
+    </iron-pages>
 
   </template>
 
@@ -103,6 +95,16 @@
        * @type {String}
        */
       PROFILE: 'profile',
+      /**
+       * @type {String}
+       */
+      LOGOUT: 'logout',
+    }
+    const CUSTOMEVENTS = {
+      /**
+       * @type {String}
+       */
+      CHANGE_PAGE: 'changepage',
     }
 
     class OceanEyeApp extends Polymer.Element {
@@ -117,7 +119,7 @@
           routeData: Object,
           subrouteData: Object,
           subroute: String,
-          rootPath: String, // Polymer.Element#rootPath
+          rootPath: String,
           /**
            * Collection selected (detected by subrouter)
            * @type {String}
@@ -139,14 +141,29 @@
         ];
       }
       /**
+       * Listen to views' custom events
+       */
+      ready() {
+        super.ready()
+        // collections events listener
+        // e.g. play page selected
+        this.root.querySelector('collections-view')
+                 .addEventListener(CUSTOMEVENTS.CHANGE_PAGE, e => {
+          this.page = e.detail.page ? e.detail.page : this.page
+        })
+      }
+      /**
        * Router observer
        *
        * @param {String} page
        */
       _routePageChanged(page) {
+        if (page === PAGE.LOGOUT) {
+          // redirect to logout page
+          window.location = `${rootPath}/${PAGE.LOGOUT}`
+        }
         // fallback to collections view on first loading
         this.page = page || PAGE.COLLECTIONS;
-
         // NOTE patch to reset the potentially selected collection
         // See: /fragments/collections-view.html
         if (this.subroute.path === ''
@@ -174,11 +191,7 @@
        * @param {String} page
        */
       _pageChanged(page) {
-        Polymer.importHref(
-            this._resolvedPageUrl(this.page),
-            null,
-            null,// e.g. this._showPage404.bind(this),
-            true)
+        Polymer.importHref(this._resolvedPageUrl(this.page), null, null, true)
         // Push state
         window.history.pushState({}, null, this.page)
         window.dispatchEvent(new CustomEvent('location-changed'))

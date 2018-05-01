@@ -7,6 +7,7 @@
 <link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="../../helpers/ocean-api.html">
+<link rel="import" href="../../helpers/ocean-eye-informationitem.html">
 
 <dom-module id="collections-view">
   <template>
@@ -37,7 +38,7 @@
 
     <section class="collections__wrapper">
       <iron-list>
-        <dom-repeat for="{{collections}}" as="collection">
+        <dom-repeat items="{{collections}}" as="collection">
           <iron-selector
             attr-for-selected="data-id"
             selected="{{collectionId}}">
@@ -57,14 +58,44 @@
           </iron-selector>
         </dom-repeat>
       </iron-list>
-      <!-- TODO adapt to use the router -->
-      <a href="[[basePath]]/new" id="fabWrapper">
+      <span on-click="_play" id="fabWrapper">
         <paper-fab icon="add"></paper-fab>
-      </a>
+      </span>
     </section>
 
     <section class="collection_view__wrapper">
       <paper-button on-click="_showList()">Back</paper-button>
+      <paper-item>
+        <paper-item-body two-line>
+          <div>[[collection.owner]]</div>
+          <div secondary>[[collection.date]]</div>
+        </paper-item-body>
+        <!-- TODO add events to load the page  -->
+        <!-- <iron-icon icon="favorite"></iron-icon> -->
+      </paper-item>
+      <div class="informationitems__wrapper">
+        <div class="informationitems__container informationitems__container--product">
+          <dom-repeat items="[[collection.informationitems.product]]">
+            <ocean-eye-informationitem
+              info="[[item]]"
+              summary></ocean-eye-informationitem>
+          </dom-repeat>
+        </div>
+        <div class="informationitems__container informationitems__container--resources">
+          <dom-repeat items="[[collection.informationitems.resources]]">
+            <ocean-eye-informationitem
+              info="[[item]]"
+              summary></ocean-eye-informationitem>
+          </dom-repeat>
+        </div>
+        <div class="informationitems__container informationitems__container--customer">
+          <dom-repeat items="[[collection.informationitems.customer]]">
+            <ocean-eye-informationitem
+              info="[[item]]"
+              summary></ocean-eye-informationitem>
+          </dom-repeat>
+        </div>
+      </div>
     </section>
 
   </template>
@@ -115,7 +146,6 @@
        */
       _collectionSelected(id, oldId) {
         // execute query to retrieve collection data
-        console.log(this.$.collectionDataApi.params); // TODO dev only
         this.$.collectionDataApi.execute()
       }
       /**
@@ -124,6 +154,15 @@
        */
       _showList() {
         this.collection = null
+      }
+      /**
+       * Start new collection evaluation
+       * 'Play'
+       */
+      _play() {
+        this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
+          detail: { page: PAGE.PLAY }
+        }))
       }
     }
 
