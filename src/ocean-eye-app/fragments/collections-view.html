@@ -158,6 +158,8 @@
       /**
        * Start new collection evaluation
        * 'Play'
+       * Broadcast event to trigger router and change page
+       * see: ready() in ocean-eye-app.html
        */
       _play() {
         this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {

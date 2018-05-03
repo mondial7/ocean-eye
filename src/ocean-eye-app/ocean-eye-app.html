@@ -3,8 +3,11 @@
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <!-- TODO lazy import -> prpl pattern -->
 <link rel="import" href="fragments/collections-view.html">
@@ -29,12 +32,23 @@
         background-color: var(--app-primary-color);
       }
 
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: var(--app-negative-color);
+      paper-button {
+        min-width: auto !important;
       }
 
       iron-pages {
         padding: var(--page-padding);
+      }
+
+      #mainTitle {
+        cursor: pointer;
+      }
+
+      paper-progress {
+        display: block;
+        width: 100%;
+        --paper-progress-active-color: var(--app-negative-color);
+        --paper-progress-container-color: transparent;
       }
     </style>
 
@@ -56,13 +70,21 @@
 
     <app-header slot="header">
       <app-toolbar>
-        <div main-title>Ocean Eye</div>
-        <iron-selector attr-for-selected="icon" selected="{{page}}">
-          <paper-icon-button icon="profile"></paper-icon-button>
-          <paper-icon-button icon="logout"></paper-icon-button>
-        </iron-selector>
+        <!-- NOTE since main-title is not clickable
+        https://github.com/PolymerElements/app-layout/issues/513#issuecomment-332611042 -->
+        <span id="mainTitle" on-click="_goHome">Ocean Eye</span>
+        <div main-title></div>
+        <paper-button on-click="_goProfile">
+          <iron-icon icon="account-circle"></iron-icon>
+        </paper-button>
+        <paper-button on-click="_logout">
+          <iron-icon icon="exit-to-app"></iron-icon>
+        </paper-button>
+        <paper-progress value="[[progress]]" bottom-item></paper-progress>
       </app-toolbar>
     </app-header>
+
+    <h2>[[abc]]</h2>
 
     <iron-pages
         selected="[[page]]"
@@ -127,7 +149,15 @@
           collection: {
             type: String,
             value: '',
-          }
+          },
+          /**
+           * Progress bar value [0-100]
+           * @type {Number}
+           */
+          progress: {
+            type: Number,
+            value: 0,
+          },
         }
       }
       /**
@@ -160,7 +190,7 @@
       _routePageChanged(page) {
         if (page === PAGE.LOGOUT) {
           // redirect to logout page
-          window.location = `${rootPath}/${PAGE.LOGOUT}`
+          window.location = `${this.rootPath}/${PAGE.LOGOUT}`
         }
         // fallback to collections view on first loading
         this.page = page || PAGE.COLLECTIONS;
@@ -212,6 +242,25 @@
             page = PAGE.COLLECTIONS
         }
         return this.resolveUrl(`fragments/${page}-view.html`)
+      }
+      /**
+       * Navigate to home
+       * Home == COLLECTIONS
+       */
+      _goHome() {
+        this.page = PAGE.COLLECTIONS
+      }
+      /**
+       * Navigate to profile
+       */
+      _goProfile() {
+        this.page = PAGE.PROFILE
+      }
+      /**
+       * Logout
+       */
+      _logout() {
+        this.page = PAGE.LOGOUT
       }
     }
 
