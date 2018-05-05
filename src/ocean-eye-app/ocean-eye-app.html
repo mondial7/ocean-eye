@@ -91,7 +91,7 @@
         attr-for-selected="name">
       <collections-view
         name="collections"
-        collection="{{collection}}"></collections-view>
+        collection-id="{{collectionId}}"></collections-view>
       <profile-view name="settings"></profile-view>
       <play-view name="play"></play-view>
     </iron-pages>
@@ -143,12 +143,11 @@
           subroute: String,
           rootPath: String,
           /**
-           * Collection selected (detected by subrouter)
-           * @type {String}
+           * Collection id selected (detected by subrouter)
+           * @type {Number}
            */
-          collection: {
-            type: String,
-            value: '',
+          collectionId: {
+            type: Number,
           },
           /**
            * Progress bar value [0-100]
@@ -199,7 +198,7 @@
         if (this.subroute.path === ''
             && this.subroute.prefix === `/${PAGE.COLLECTIONS}`
             || page !== PAGE.COLLECTIONS) {
-          this.collection = ''
+          this.collectionId = null
         }
       }
       /**

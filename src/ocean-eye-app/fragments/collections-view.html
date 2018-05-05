@@ -15,33 +15,32 @@
       :host {
         display: block;
       }
-      /* TODO toggle view according to subrouter value */
-      .collection_view__wrapper {
-        display: none;
-      }
       #fabWrapper {
         position: fixed;
         right: var(--page-padding, 15px);
         bottom: var(--page-padding, 15px);
+      }
+      [hidden="true"] {
+        display: none;
       }
     </style>
 
     <ocean-api
       id="collectionListApi"
       endpoint="collections/list"
-      response="{{collections}}"></ocean-api>
+      response="{{_collections}}"></ocean-api>
     <ocean-api
       id="collectionDataApi"
       endpoint="collections/read"
-      params='{"id":"[[collectionID]]"}'
-      response="{{collections}}"></ocean-api>
+      params='{"id":"[[collectionId]]"}'
+      response="{{_collection}}"></ocean-api>
 
-    <section class="collections__wrapper">
+    <section class="collections__wrapper" hidden$="[[_collectionLoaded]]">
       <iron-list>
-        <dom-repeat items="{{collections}}" as="collection">
-          <iron-selector
-            attr-for-selected="data-id"
-            selected="{{collectionId}}">
+        <iron-selector
+          attr-for-selected="data-id"
+          selected="{{collectionId}}">
+          <dom-repeat items="[[_collections]]" as="collection">
             <paper-item data-id="[[collection.id]]">
               <!-- <div class="collection_card__footer">
                 <paper-button raised on-click="thumbUp([[collection.id]])">
@@ -55,41 +54,41 @@
               <!-- TODO add events to load the page  -->
               <!-- <iron-icon icon="favorite"></iron-icon> -->
             </paper-item>
-          </iron-selector>
-        </dom-repeat>
+          </dom-repeat>
+        </iron-selector>
       </iron-list>
       <span on-click="_play" id="fabWrapper">
         <paper-fab icon="add"></paper-fab>
       </span>
     </section>
 
-    <section class="collection_view__wrapper">
-      <paper-button on-click="_showList()">Back</paper-button>
+    <section class="collection_view__wrapper" hidden$="[[!_collectionLoaded]]">
+      <paper-button on-click="_showList">Back</paper-button>
       <paper-item>
         <paper-item-body two-line>
-          <div>[[collection.owner]]</div>
-          <div secondary>[[collection.date]]</div>
+          <div>[[_collection.owner]]</div>
+          <div secondary>[[_collection.date]]</div>
         </paper-item-body>
         <!-- TODO add events to load the page  -->
         <!-- <iron-icon icon="favorite"></iron-icon> -->
       </paper-item>
       <div class="informationitems__wrapper">
         <div class="informationitems__container informationitems__container--product">
-          <dom-repeat items="[[collection.informationitems.product]]">
+          <dom-repeat items="[[_collection.informationitems.product]]">
             <ocean-eye-informationitem
               info="[[item]]"
               summary></ocean-eye-informationitem>
           </dom-repeat>
         </div>
         <div class="informationitems__container informationitems__container--resources">
-          <dom-repeat items="[[collection.informationitems.resources]]">
+          <dom-repeat items="[[_collection.informationitems.resources]]">
             <ocean-eye-informationitem
               info="[[item]]"
               summary></ocean-eye-informationitem>
           </dom-repeat>
         </div>
         <div class="informationitems__container informationitems__container--customer">
-          <dom-repeat items="[[collection.informationitems.customer]]">
+          <dom-repeat items="[[_collection.informationitems.customer]]">
             <ocean-eye-informationitem
               info="[[item]]"
               summary></ocean-eye-informationitem>
@@ -106,10 +105,20 @@
       static get properties() {
         return {
           /**
+           * Collection ID
+           * @type {Number}
+           */
+          collectionId: {
+            type: Number,
+            notify: true,
+            reflectToAttribute: true,
+            observer: '_collectionSelected',
+          },
+          /**
            * Collections list
            * @type {Array}
            */
-          collections: {
+          _collections: {
             type: Object,
             value: () => [],
           },
@@ -117,19 +126,18 @@
            * Collection selected
            * @type {Array}
            */
-          collection: {
+          _collection: {
             type: Object,
-            notify: true,
-            reflectToAttribute: true,
+            observer: '_collectionChanged',
           },
           /**
-           * Collection ID
-           * @type {Number}
+           * Loaded status of collection
+           * @type {Boolean}
            */
-          collectionID: {
-            type: Number,
-            observer: '_collectionSelected'
-          }
+          _collectionLoaded: {
+            type: Boolean,
+            value: false,
+          },
         }
       }
       /**
@@ -140,20 +148,28 @@
         this.$.collectionListApi.execute()
       }
       /**
-       * Observer for collectionID property
+       * Observer for collectionId property
        * @param {Number}
        * @param {Number}
        */
       _collectionSelected(id, oldId) {
         // execute query to retrieve collection data
-        this.$.collectionDataApi.execute()
+        if (id) this.$.collectionDataApi.execute()
+      }
+      /**
+       * Observer for collection property
+       * Handle the sections display
+       *
+       */
+      _collectionChanged(collection, oldCollection) {
+        this._collectionLoaded = collection !== null && collection !== undefined 
       }
       /**
        * Force list view
        * delete colection data
        */
       _showList() {
-        this.collection = null
+        this._collection = null
       }
       /**
        * Start new collection evaluation
