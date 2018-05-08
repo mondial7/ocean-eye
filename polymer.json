@@ -1,5 +1,5 @@
 {
-  "entrypoint": "ocean.html",
+  "entrypoint": "index.html",
   "shell": "src/ocean-eye-app/ocean-eye-app.html",
   "lint": {
     "rules": [
