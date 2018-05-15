@@ -13,36 +13,46 @@
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="Baby">
       <template>
         <ocean-eye-app></ocean-eye-app>
       </template>
     </test-fixture>
 
-    <test-fixture id="ChangedPropertyTestFixture">
+    <test-fixture id="Router">
       <template>
-        <ocean-eye-app prop1="new-prop1"></ocean-eye-app>
+        <ocean-eye-app page="profile"></ocean-eye-app>
       </template>
     </test-fixture>
 
     <script>
-      suite('ocean-eye-app', function() {
+      suite('ocean-eye-app', () => {
 
-        test('instantiating the element with default properties works', function() {
-          var element = fixture('BasicTestFixture');
-          assert.equal(element.prop1, 'ocean-eye-app');
-          var elementShadowRoot = element.shadowRoot;
-          var elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello ocean-eye-app!');
+        test('element initialize, aka "baby test"', () => {
+          const element = fixture('Baby');
+          assert.equal(typeof element.page, 'string');
+          assert.equal(typeof element.routeData, 'object');
+          assert.equal(typeof element.subrouteData, 'object');
+          assert.equal(typeof element.subroute, 'string');
+          assert.equal(typeof element.rootPath, 'string');
+          assert.equal(typeof element.progress, 'object');
+          assert.equal(element.progress, 0);
         });
 
-        test('setting a property on the element works', function() {
-          // Create a test fixture
-          var element = fixture('ChangedPropertyTestFixture');
-          assert.equal(element.prop1, 'new-prop1');
-          var elementShadowRoot = element.shadowRoot;
-          var elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello new-prop1!');
+        test('global constants have been defined defined', () => {
+          const element = fixture('Baby');
+          assert.equal(typeof PAGE, 'object');
+          assert.equal(PAGE.COLLECTIONS, 'collections');
+          assert.equal(PAGE.PLAY, 'play');
+          assert.equal(PAGE.PROFILE, 'profile');
+          assert.equal(PAGE.LOGOUT, 'logout');
+          assert.equal(typeof CUSTOMEVENTS, 'object');
+          assert.equal(CUSTOMEVENTS.CHANGE_PAGE, 'changepage');
+        });
+
+        test('page router works', () => {
+          const element = fixture('Router');
+          // TODO ...
         });
 
       });
