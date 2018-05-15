@@ -1,0 +1,67 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../../helpers/ocean-eye-informationitem.html">
+
+<dom-module id="collections-details">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <paper-item>
+      <paper-item-body two-line>
+        <div>[[collection.owner]]</div>
+        <div secondary>[[collection.date]]</div>
+      </paper-item-body>
+      <!-- TODO add events to load the page  -->
+      <!-- <iron-icon icon="favorite"></iron-icon> -->
+    </paper-item>
+    <div class="informationitems__wrapper">
+      <div class="informationitems__container informationitems__container--product">
+        <dom-repeat items="[[collection.informationitems.product]]">
+          <ocean-eye-informationitem
+            info="[[item]]"
+            summary></ocean-eye-informationitem>
+        </dom-repeat>
+      </div>
+      <div class="informationitems__container informationitems__container--resources">
+        <dom-repeat items="[[collection.informationitems.resources]]">
+          <ocean-eye-informationitem
+            info="[[item]]"
+            summary></ocean-eye-informationitem>
+        </dom-repeat>
+      </div>
+      <div class="informationitems__container informationitems__container--customer">
+        <dom-repeat items="[[collection.informationitems.customer]]">
+          <ocean-eye-informationitem
+            info="[[item]]"
+            summary></ocean-eye-informationitem>
+        </dom-repeat>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class CollectionsDetails extends Polymer.Element {
+      static get is() { return 'collections-details'; }
+      static get properties() {
+        return {
+          /**
+           * Collection selected
+           * @type {Array}
+           */
+          _collection: {
+            type: Object,
+          },
+        }
+      }
+    }
+
+    window.customElements.define(CollectionsDetails.is, CollectionsDetails);
+  </script>
+</dom-module>

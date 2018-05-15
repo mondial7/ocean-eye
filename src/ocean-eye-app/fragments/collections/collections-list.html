@@ -1,0 +1,69 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/iron-list/iron-list.html">
+<!-- <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html"> -->
+
+<dom-module id="collections-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-list>
+      <iron-selector
+        attr-for-selected="data-id"
+        selected="{{selectedCollectionId}}">
+        <dom-repeat items="[[list]]" as="collection">
+          <paper-item data-id="[[collection.id]]">
+            <!-- <div class="collection_card__footer">
+              <paper-button raised on-click="thumbUp([[collection.id]])">
+                <iron-icon icon="thumb-up"></iron-icon> [[likes]]
+              </paper-button>
+            </div> -->
+            <paper-item-body two-line>
+              <div>[[collection.owner]]</div>
+              <div secondary>[[collection.date]]</div>
+            </paper-item-body>
+            <!-- TODO add events to load the page  -->
+            <!-- <iron-icon icon="favorite"></iron-icon> -->
+          </paper-item>
+        </dom-repeat>
+      </iron-selector>
+    </iron-list>
+
+  </template>
+
+  <script>
+    class CollectionsList extends Polymer.Element {
+      static get is() { return 'collections-list'; }
+      static get properties() {
+        return {
+          /**
+           * Collection ID
+           * @type {Number}
+           */
+          selectedCollectionId: {
+            type: Number,
+            notify: true,
+            reflectToAttribute: true,
+          },
+          /**
+           * Collections list
+           * @type {Array}
+           */
+          list: {
+            type: Object,
+            value: () => [],
+          },
+        }
+      }
+    }
+
+    window.customElements.define(CollectionsList.is, CollectionsList);
+  </script>
+</dom-module>

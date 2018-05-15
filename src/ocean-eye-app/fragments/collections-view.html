@@ -9,6 +9,9 @@
 <link rel="import" href="../../helpers/ocean-api.html">
 <link rel="import" href="../../helpers/ocean-eye-informationitem.html">
 
+<link rel="import" href="collections/collections-list.html">
+<link rel="import" href="collections/collections-details.html">
+
 <dom-module id="collections-view">
   <template>
     <style>
@@ -36,27 +39,9 @@
       response="{{_collection}}"></ocean-api>
 
     <section class="collections__wrapper" hidden$="[[_collectionLoaded]]">
-      <iron-list>
-        <iron-selector
-          attr-for-selected="data-id"
-          selected="{{collectionId}}">
-          <dom-repeat items="[[_collections]]" as="collection">
-            <paper-item data-id="[[collection.id]]">
-              <!-- <div class="collection_card__footer">
-                <paper-button raised on-click="thumbUp([[collection.id]])">
-                  <iron-icon icon="thumb-up"></iron-icon> [[likes]]
-                </paper-button>
-              </div> -->
-              <paper-item-body two-line>
-                <div>[[collection.owner]]</div>
-                <div secondary>[[collection.date]]</div>
-              </paper-item-body>
-              <!-- TODO add events to load the page  -->
-              <!-- <iron-icon icon="favorite"></iron-icon> -->
-            </paper-item>
-          </dom-repeat>
-        </iron-selector>
-      </iron-list>
+      <collections-list
+        selected-collection-id="{{collectionId}}"
+        list="[[_collections]]"></collections-list>
       <span on-click="_play" id="fabWrapper">
         <paper-fab icon="add"></paper-fab>
       </span>
@@ -64,37 +49,7 @@
 
     <section class="collection_view__wrapper" hidden$="[[!_collectionLoaded]]">
       <paper-button on-click="_showList">Back</paper-button>
-      <paper-item>
-        <paper-item-body two-line>
-          <div>[[_collection.owner]]</div>
-          <div secondary>[[_collection.date]]</div>
-        </paper-item-body>
-        <!-- TODO add events to load the page  -->
-        <!-- <iron-icon icon="favorite"></iron-icon> -->
-      </paper-item>
-      <div class="informationitems__wrapper">
-        <div class="informationitems__container informationitems__container--product">
-          <dom-repeat items="[[_collection.informationitems.product]]">
-            <ocean-eye-informationitem
-              info="[[item]]"
-              summary></ocean-eye-informationitem>
-          </dom-repeat>
-        </div>
-        <div class="informationitems__container informationitems__container--resources">
-          <dom-repeat items="[[_collection.informationitems.resources]]">
-            <ocean-eye-informationitem
-              info="[[item]]"
-              summary></ocean-eye-informationitem>
-          </dom-repeat>
-        </div>
-        <div class="informationitems__container informationitems__container--customer">
-          <dom-repeat items="[[_collection.informationitems.customer]]">
-            <ocean-eye-informationitem
-              info="[[item]]"
-              summary></ocean-eye-informationitem>
-          </dom-repeat>
-        </div>
-      </div>
+      <collections-details collection="[[_collection]]"></collections-details>
     </section>
 
   </template>
@@ -162,7 +117,7 @@
        *
        */
       _collectionChanged(collection, oldCollection) {
-        this._collectionLoaded = collection !== null && collection !== undefined 
+        this._collectionLoaded = collection !== null && collection !== undefined
       }
       /**
        * Force list view
