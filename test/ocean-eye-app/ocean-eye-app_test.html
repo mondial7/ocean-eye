@@ -30,12 +30,11 @@
 
         test('element initialize, aka "baby test"', () => {
           const element = fixture('Baby');
+          assert.equal(typeof element.rootPath, 'string');
           assert.equal(typeof element.page, 'string');
           assert.equal(typeof element.routeData, 'object');
           assert.equal(typeof element.subrouteData, 'object');
-          assert.equal(typeof element.subroute, 'string');
-          assert.equal(typeof element.rootPath, 'string');
-          assert.equal(typeof element.progress, 'object');
+          assert.equal(typeof element.progress, 'number');
           assert.equal(element.progress, 0);
         });
 

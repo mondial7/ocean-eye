@@ -138,10 +138,15 @@
             reflectToAttribute: true,
             observer: '_pageChanged',
           },
-          routeData: Object,
-          subrouteData: Object,
-          subroute: String,
-          rootPath: String,
+          routeData: {
+            type: Object,
+          },
+          subrouteData: {
+            type: Object,
+          },
+          rootPath: {
+            type: String,
+          },
           /**
            * Collection id selected (detected by subrouter)
            * @type {Number}
