@@ -1,3 +1,5 @@
+<script src="../config.js"></script>
+
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
@@ -84,8 +86,6 @@
       </app-toolbar>
     </app-header>
 
-    <h2>[[abc]]</h2>
-
     <iron-pages
         selected="[[page]]"
         attr-for-selected="name">
@@ -99,36 +99,6 @@
   </template>
 
   <script>
-
-    /**
-     * Application wide constants
-     *
-     */
-    const PAGE = {
-      /**
-       * @type {String}
-       */
-      COLLECTIONS: 'collections',
-      /**
-       * @type {String}
-       */
-      PLAY: 'play',
-      /**
-       * @type {String}
-       */
-      PROFILE: 'profile',
-      /**
-       * @type {String}
-       */
-      LOGOUT: 'logout',
-    }
-    const CUSTOMEVENTS = {
-      /**
-       * @type {String}
-       */
-      CHANGE_PAGE: 'changepage',
-    }
-
     class OceanEyeApp extends Polymer.Element {
       static get is() { return 'ocean-eye-app'; }
       static get properties() {

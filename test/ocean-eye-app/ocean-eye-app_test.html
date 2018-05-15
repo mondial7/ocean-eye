@@ -38,6 +38,8 @@
         });
 
         test('global constants have been defined defined', () => {
+          assert.equal(typeof API, 'object');
+          assert.equal(typeof API.HOST, 'string');
           assert.equal(typeof PAGE, 'object');
           assert.equal(PAGE.COLLECTIONS, 'collections');
           assert.equal(PAGE.PLAY, 'play');

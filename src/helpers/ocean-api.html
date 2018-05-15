@@ -11,7 +11,7 @@
 
     <iron-ajax
       id="request"
-      url="[[OceanEye.API_HOST]][[endpoint]]"
+      url="[[host]][[endpoint]]"
       method="[[method]]"
       loading="{{loading}}"
       handle-as="json"
@@ -24,6 +24,14 @@
       static get is() { return 'ocean-api'; }
       static get properties() {
         return {
+          /**
+           * Host -> default global settings
+           * @type {String}
+           */
+          host: {
+            type: String,
+            value: API.HOST || ''
+          },
           /**
            * Endpoint
            * @type {String}
