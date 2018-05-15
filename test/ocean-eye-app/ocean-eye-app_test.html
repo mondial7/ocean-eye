@@ -19,17 +19,16 @@
       </template>
     </test-fixture>
 
-    <test-fixture id="Router">
-      <template>
-        <ocean-eye-app page="profile"></ocean-eye-app>
-      </template>
-    </test-fixture>
-
     <script>
       suite('ocean-eye-app', () => {
 
-        test('element initialize, aka "baby test"', () => {
-          const element = fixture('Baby');
+        let element;
+
+        setup(() => {
+          element = fixture('Baby');
+        });
+
+        test('aka baby-test', () => {
           assert.equal(typeof element.rootPath, 'string');
           assert.equal(typeof element.page, 'string');
           assert.equal(typeof element.routeData, 'object');
@@ -39,7 +38,6 @@
         });
 
         test('global constants have been defined defined', () => {
-          const element = fixture('Baby');
           assert.equal(typeof PAGE, 'object');
           assert.equal(PAGE.COLLECTIONS, 'collections');
           assert.equal(PAGE.PLAY, 'play');
@@ -49,9 +47,22 @@
           assert.equal(CUSTOMEVENTS.CHANGE_PAGE, 'changepage');
         });
 
-        test('page router works', () => {
-          const element = fixture('Router');
-          // TODO ...
+        test('default navigation works', () => {
+          assert.equal(element.page, PAGE.COLLECTIONS);
+          assert.equal(element.collectionId, null);
+        });
+
+        test('page navigation works', () => {
+          element.routeData = { page: PAGE.PLAY };
+          assert.equal(element.page, PAGE.PLAY);
+        });
+
+        test('collections subpage works', () => {
+          element.routeData = { page: PAGE.COLLECTIONS };
+          element.subrouteData = { subpage: '111' };
+          assert.equal(element.collectionId, 111);
+          element.routeData = { page: PAGE.PLAY };
+          assert.equal(element.collectionId, null);
         });
 
       });
