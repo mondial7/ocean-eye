@@ -53,10 +53,21 @@
         return {
           /**
            * Collection selected
-           * @type {Array}
+           * @type {Object}
            */
           _collection: {
             type: Object,
+            value: () => {
+              return {
+                owner: '',
+                date: '',
+                informationitems: {
+                  product: [],
+                  resources: [],
+                  customer: []
+                }
+              }
+            }
           },
         }
       }

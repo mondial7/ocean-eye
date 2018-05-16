@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>collections-details test</title>
+
+    <script src="../../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../../src/ocean-eye-app/fragments/collections/collections-details.html">
+  </head>
+  <body>
+
+    <test-fixture id="Baby">
+      <template>
+        <collections-details></collections-details>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('collections-details', () => {
+        let element;
+        setup(() => {
+          element = fixture('Baby');
+        });
+
+        /**
+         * Test default properties
+         */
+        test('aka baby-test', () => {
+          assert.equal(typeof element._collection, 'object');
+          assert.equal(
+            JSON.stringify(element._collection),
+            JSON.stringify({
+              owner: '',
+              date: '',
+              informationitems: {
+                product: [],
+                resources: [],
+                customer: []
+              }
+            }),
+          );
+        });
+
+      });
+    </script>
+
+  </body>
+</html>
