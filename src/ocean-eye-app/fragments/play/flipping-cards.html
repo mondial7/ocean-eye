@@ -3,8 +3,6 @@
 <!-- <link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../../bower_components/iron-list/iron-list.html"> -->
-<!-- <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html"> -->
 
 <link rel="import" href="../../../helpers/ocean-eye-informationitem.html">
 
@@ -14,25 +12,25 @@
       :host {
         display: block;
       }
+      ocean-eye-informationitem {
+        min-height: 200px;
+        min-width: 150px;
+        background-color: #fff;
+        box-shadow: 0px 0px 3px #999;
+        cursor: pointer;
+      }
     </style>
 
     <!-- TODO show all the cards with the possibility to flip them -->
 
-    <dom-repeat items="{{cards}}" as="">
-      <ocean-eye-informationitem
-        info="[[item]]"
-        summary></ocean-eye-informationitem>
+    <dom-repeat items="[[cards]]" as="item">
+      <template>
+        <ocean-eye-informationitem
+          on-click="_flip"
+          info="[[item]]"
+          summary></ocean-eye-informationitem>
+      </template>
     </dom-repeat>
-
-    <!-- <iron-list>
-      <iron-selector
-        attr-for-selected="data-id"
-        selected="{{selectedCollectionId}}">
-        <dom-repeat items="[[list]]" as="collection">
-
-        </dom-repeat>
-      </iron-selector>
-    </iron-list> -->
 
   </template>
 
@@ -43,7 +41,7 @@
         return {
           /**
            * Cards || Information items
-           * @type {Array}   [{..., flipped: Boolean},]
+           * @type {Array}   [{ name: String, flipped: Boolean }]
            */
           cards: {
             type: Array,
@@ -52,6 +50,20 @@
             value: () => [],
           },
         }
+      }
+      /**
+       * Flip a card
+       * @param {Object}    event
+       */
+      _flip(e) {
+        // get the information-item clicked element
+        let element = e.path.filter(
+          x => x.nodeName === 'OCEAN-EYE-INFORMATIONITEM'
+        )[0]
+        // flip property
+        element.info.flipped = !element.info.flipped
+        // flip visualization
+        element.disabled = element.info.flipped
       }
     }
 

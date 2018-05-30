@@ -14,17 +14,17 @@
     </style>
 
     <ocean-api
-      id="playSteps"
-      endpoint="play/steps"
-      response="{{_steps}}"></ocean-api>
+      id="cardsAPI"
+      endpoint="play/cards"
+      response="{{informationitems}}"></ocean-api>
 
     <!-- TODO logger to store activities
     <ocean-api
-      id="playSteps"
-      endpoint="play/steps"
-      response="{{_steps}}"></ocean-api> -->
+      id="loggerAPI"
+      endpoint="log/play"
+      response="{{loggerStatus}}"></ocean-api> -->
 
-    <flipping-cards id="first" cards="{{informationitems}}"></fliping-cards>
+    <flipping-cards id="first" cards="{{informationitems}}"></flipping-cards>
 
     <section id="secondStep">
       <!-- TODO second step -->
@@ -67,7 +67,13 @@
            */
           informationitems: {
             type: Array,
-            value: () => [],
+            value: () => [
+              // TODO demo only
+              {
+                name: 'Churn Rate',
+                flipped: false,
+              }
+            ],
           },
         }
       }
@@ -76,6 +82,8 @@
        */
       ready() {
         super.ready()
+        this.$.cardsAPI.execute()
+        // listen to items/cards updates
         this.$.first.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
           this._informationitemsUpdated(e.details)
         })

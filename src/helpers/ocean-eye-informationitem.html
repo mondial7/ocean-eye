@@ -8,9 +8,10 @@
         display: inline-block;
         max-width: var(--informationitem-max-width, 200px);
         max-height: var(--informationitem-max-height, 300px);
+        transition: all 300ms;
       }
       :host([disabled]) {
-        opacity: 0.7;
+        opacity: 0.2 !important;
       }
       :host([summary]) .extra {
         display: none;
@@ -57,9 +58,25 @@
            */
           disabled: {
             type: Boolean,
+            reflectToAttribute: true,
             value: false,
           },
         }
+      }
+      /**
+       * Deep observers
+       */
+      static get observers() {
+        return [
+          // '_flip(info.flipped)',
+        ]
+      }
+      /**
+       * Flip card
+       * @param {Boolean}
+       */
+      _flip(flipped) {
+        this.disabled = flipped
       }
     }
 
