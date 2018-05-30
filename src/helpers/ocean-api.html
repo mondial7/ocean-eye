@@ -129,7 +129,13 @@
        * @param {Object} iron-request
        */
       _handleResponse(req) {
-        this.response = req.detail.response
+        // catch API errors
+        if (req.detail.response.status === 'ERROR') {
+          console.warn(this.endpoint, req.detail.response)
+        } else {
+          // set response
+          this.response = req.detail.response
+        }
       }
 
     }
