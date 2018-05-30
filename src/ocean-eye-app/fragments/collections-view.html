@@ -24,8 +24,8 @@
         right: var(--page-padding, 15px);
         bottom: var(--page-padding, 15px);
       }
-      [hidden="true"] {
-        display: none;
+      [hidden] {
+        display: none !important;
       }
     </style>
 
@@ -39,7 +39,7 @@
       params='{"id":"[[collectionId]]"}'
       response="{{_collection}}"></ocean-api>
 
-    <section class="collections__wrapper" hidden$="[[!_collectionLoaded]]">
+    <section class="collections__wrapper" hidden$="[[_collectionLoaded]]">
       <collections-list
         selected-collection-id="{{collectionId}}"
         list="[[_collections]]"></collections-list>
@@ -48,7 +48,7 @@
       </span>
     </section>
 
-    <section class="collection_view__wrapper" hidden$="[[_collectionLoaded]]">
+    <section class="collection_view__wrapper" hidden$="[[!_collectionLoaded]]">
       <paper-button on-click="_showList">Back</paper-button>
       <collections-details collection="[[_collection]]"></collections-details>
     </section>
@@ -119,7 +119,8 @@
        * @param {Object}
        */
       _collectionChanged(collection, oldCollection) {
-        this._collectionLoaded = collection !== null && collection !== undefined
+        this._collectionLoaded = !(collection === null ||
+                                   collection === undefined)
       }
       /**
        * Force list view
