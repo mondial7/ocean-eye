@@ -46,4 +46,8 @@ const CUSTOMEVENTS = {
    * @type {String}
    */
   CHANGE_PAGE: 'changepage',
+  /**
+   * @type {String}
+   */
+  UPDATE_ITEMS: 'updateitems',
 }

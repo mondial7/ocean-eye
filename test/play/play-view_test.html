@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>play-view test</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/ocean-eye-app/fragments/play-view.html">
+  </head>
+  <body>
+
+    <test-fixture id="Baby">
+      <template>
+        <play-view></play-view>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('play-view', () => {
+        let element;
+        setup(() => {
+          element = fixture('Baby');
+        });
+
+        /**
+         * Test default properties
+         */
+        test('aka baby-test', () => {
+          assert.equal(element._steps, 1);
+          assert.equal(element.status, 'standby');
+          assert.equal(JSON.stringify(element.logs), '[]');
+          assert.equal(JSON.stringify(element.informationitems), '[]');
+        });
+
+        /**
+         * Test activity logger
+         */
+        test('logs can be saved', () => {
+          const activity = {
+            verbose: 'item x has been flipped',
+            item: { flipped: true },
+          }
+          assert.equal(element.logs.length, 0)
+          // store log
+          element._informationitemsUpdated(activity)
+          // evaluate saved logs
+          assert.equal(element.logs.length, 1)
+          assert.equal(
+            JSON.stringify(element.logs[0].activity),
+            JSON.stringify(activity)
+          )
+        })
+
+      });
+    </script>
+
+  </body>
+</html>

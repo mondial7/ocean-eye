@@ -1,0 +1,89 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../helpers/ocean-api.html">
+<link rel="import" href="../../helpers/ocean-eye-config.html">
+<link rel="import" href="./play/flipping-cards.html">
+<link rel="import" href="./play/tuning-problem.html">
+
+<dom-module id="play-view">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <ocean-api
+      id="playSteps"
+      endpoint="play/steps"
+      response="{{_steps}}"></ocean-api>
+
+    <flipping-cards id="first" cards="{{informationitems}}"></fliping-cards>
+
+    <section id="secondStep">
+      <!-- TODO second step -->
+    </section>
+
+  </template>
+
+  <script>
+    class PlayView extends Polymer.Element {
+      static get is() { return 'play-view'; }
+      static get properties() {
+        return {
+          /**
+           * Status
+           * @type {String}   standby or working
+           */
+          status: {
+            type: String,
+            value: 'standby',
+          },
+          /**
+           * Steps
+           * @type {Number}   1 or 2
+           */
+          _steps: {
+            type: Number,
+            value: 1,
+          },
+          /**
+           * Logs -> track user activity
+           * @type {Array}
+           */
+          logs: {
+            type: Array,
+            value: () => [],
+          },
+          /**
+           * InformationItems || Cards
+           * @type {Array}
+           */
+          informationitems: {
+            type: Array,
+            value: () => [],
+          },
+        }
+      }
+      /**
+       * Register event listeners
+       */
+      ready() {
+        super.ready()
+        this.$.first.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
+          this._informationitemsUpdated(e.details)
+        })
+      }
+      /**
+       * Listen to information items update activity
+       * @param {Object}   activity
+       */
+      _informationitemsUpdated(activity) {
+        // update logs
+        this.logs.push({ activity, time: new Date() })
+      }
+    }
+
+    window.customElements.define(PlayView.is, PlayView);
+  </script>
+</dom-module>
