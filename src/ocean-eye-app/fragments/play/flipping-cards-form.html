@@ -1,0 +1,63 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<!-- TODO paper inputs -->
+
+<link rel="import" href="../../../helpers/ocean-eye-api.html">
+
+<dom-module id="flipping-cards-form">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <ocean-api
+      id="newItemAPI"
+      endpoint="items/add"
+      method="POST"
+      params="[[params]]"
+      response="{{response}}"></ocean-api>
+
+    <input />
+    <!-- TODO inputs ... -->
+    <button on-click="_storeItem">ADD</button>
+
+  </template>
+
+  <script>
+    class FlippingCardsForm extends Polymer.Element {
+      static get is() { return 'flipping-cards-form'; }
+      static get properties() {
+        return {
+          /**
+           * Visibility
+           * @type {Boolean}
+           */
+          visible: {
+            type: Boolean,
+            notify: true,
+            reflectToAttribute: true,
+            value: false,
+          },
+          /**
+           * Response -> expose
+           * @type {Object}
+           */
+          response: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true,
+          }
+        }
+      }
+      /**
+       * Store new information item
+       */
+      _storeItem() {
+        this.$.newItemAPI.execute()
+      }
+    }
+
+    window.customElements.define(FlippingCards.is, FlippingCards);
+  </script>
+</dom-module>

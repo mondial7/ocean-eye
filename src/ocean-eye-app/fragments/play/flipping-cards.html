@@ -11,17 +11,45 @@
     <style>
       :host {
         display: block;
+        position: relative;
       }
-      ocean-eye-informationitem {
+      ocean-eye-informationitem,
+      #mockNewItem {
         min-height: 200px;
         min-width: 150px;
         background-color: #fff;
         box-shadow: 0px 0px 3px #999;
         cursor: pointer;
+        vertical-align: middle;
+        box-sizing: border-box;
+      }
+      #mockNewItem {
+        display: inline-block;
+        text-align: center;
+        font-size: 24px;
+        color: #888;
+        font-weight: 900;
+        padding: 15px;
+        background-color: #eee;
+      }
+      #newInfoForm {
+        display: none;
+        position: absolute;
       }
     </style>
 
     <!-- TODO show all the cards with the possibility to flip them -->
+
+    <div id="newInfoForm">
+      <input />
+      
+      <button on-click="_storeItem">ADD</button>
+    </div>
+
+    <div id="mockNewItem" on-click="_addInfo">
+      <!-- TODO svg plus -->
+      <span>New<br>information<br>item</span>
+    </div>
 
     <dom-repeat items="[[cards]]" as="item">
       <template>
@@ -64,6 +92,19 @@
         element.info.flipped = !element.info.flipped
         // flip visualization
         element.disabled = element.info.flipped
+      }
+      /**
+       * Add new informationitem
+       */
+      _addInfo() {
+        // TODO show the form
+        this.$.newInfoForm.style.display = 'block';
+      }
+      /**
+       * Store new information item
+       */
+      _storeItem() {
+        // TODO send item to API
       }
     }
 
