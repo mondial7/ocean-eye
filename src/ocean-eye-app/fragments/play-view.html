@@ -1,9 +1,11 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../helpers/ocean-api.html">
 <link rel="import" href="../../helpers/ocean-eye-config.html">
 <link rel="import" href="./play/flipping-cards.html">
 <link rel="import" href="./play/tuning-problem.html">
+<!-- <link rel="import" href="./play/end-game.html"> -->
 
 <dom-module id="play-view">
   <template>
@@ -24,11 +26,13 @@
       endpoint="log/play"
       response="{{loggerStatus}}"></ocean-api> -->
 
-    <flipping-cards id="first" cards="{{informationitems}}"></flipping-cards>
-
-    <section id="secondStep">
-      <!-- TODO second step -->
-    </section>
+    <iron-pages
+        selected="[[_step]]"
+        attr-for-selected="data-step">
+      <flipping-cards id="first" data-step="1" cards="{{informationitems}}"></flipping-cards>
+      <tuning-problem id="second" data-step="2" cards="{{informationitems}}"></tuning-problem>
+      <!-- <end-game data-step="3"></end-game> -->
+    </iron-pages>
 
   </template>
 
@@ -49,7 +53,7 @@
            * Steps
            * @type {Number}   1 or 2
            */
-          _steps: {
+          _step: {
             type: Number,
             value: 1,
           },
@@ -71,6 +75,7 @@
               // TODO demo only
               {
                 name: 'Churn Rate',
+                summary: 'Proportion of customers who leave a supplier during a given time period',
                 flipped: false,
               }
             ],
@@ -87,6 +92,13 @@
         this.$.first.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
           this._informationitemsUpdated(e.details)
         })
+        // listen to player navigator
+        this.$.first.addEventListener(CUSTOMEVENTS.PLAY_NAVIGATOR, e => {
+          this._move(e.detail.step)
+        })
+        this.$.second.addEventListener(CUSTOMEVENTS.PLAY_NAVIGATOR, e => {
+          this._move(e.detail.step)
+        })
       }
       /**
        * Listen to information items update activity
@@ -96,6 +108,25 @@
         // update logs
         this.logs.push({ activity, time: new Date() })
       }
+      /**
+       * Navigate play steps
+       * @param {String}   target step
+       */
+      _move(target) {
+        switch (target) {
+          case PLAY.END:
+            // TODO close play session
+            // TODO log activity
+            break;
+          case PLAY.TUNING:
+            this._step = 2
+            break;
+          case PLAY.FLIPPING:
+          default:
+            this._step = 1
+        }
+      }
+
     }
 
     window.customElements.define(PlayView.is, PlayView);

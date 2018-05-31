@@ -1,10 +1,9 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
-<!-- <link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../../../bower_components/iron-list/iron-list.html"> -->
 
 <link rel="import" href="../../../helpers/ocean-eye-informationitem.html">
+<link rel="import" href="../../../helpers/ocean-eye-config.html">
 
 <dom-module id="flipping-cards">
   <template>
@@ -36,6 +35,11 @@
         display: none;
         position: absolute;
       }
+      #fabWrapper {
+        position: fixed;
+        right: var(--page-padding, 15px);
+        bottom: var(--page-padding, 15px);
+      }
     </style>
 
     <!-- <div id="newInfoForm">
@@ -48,10 +52,10 @@
       <button on-click="_storeItem">ADD</button>
     </div> -->
 
-    <div id="mockNewItem" on-click="_addInfo">
-      <!-- TODO svg plus -->
+    <!-- <div id="mockNewItem" on-click="_addInfo">
+      TODO svg plus
       <span>New<br>information<br>item</span>
-    </div>
+    </div> -->
 
     <dom-repeat items="[[cards]]" as="item">
       <template>
@@ -61,6 +65,10 @@
           summary></ocean-eye-informationitem>
       </template>
     </dom-repeat>
+
+    <span on-click="_nextStep" id="fabWrapper">
+      <paper-fab icon="arrow-forward"></paper-fab>
+    </span>
 
   </template>
 
@@ -108,6 +116,15 @@
        */
       _infoAddedChanged(item) {
         // TODO add item to cards (default selected)
+      }
+      /**
+       * Move to the next step -> 'tuning-problem'
+       * Broadcast event listened by 'play-view'
+       */
+      _nextStep() {
+        this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.PLAY_NAVIGATOR, {
+          detail: { step: PLAY.TUNING }
+        }))
       }
     }
 

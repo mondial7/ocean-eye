@@ -10,25 +10,43 @@
         max-height: var(--informationitem-max-height, 300px);
         transition: all 300ms;
       }
+      :host .summary {
+        display: none;
+      }
       :host([disabled]) {
         opacity: 0.2 !important;
       }
-      :host([summary]) .extra {
+      :host([summary]) .tuning {
         display: none;
       }
+      :host([summary]) .summary {
+        display: block;
+      }
       h3 {
-        color: var(--informationitem-color, black);
+        margin: 0px;
+        padding: 15px 10px;
+        font-size: 27px;
+        color: var(--informationitem-color, #121);
         background-color: var(--informationitem-background, whitesmoke);
-        padding: 10px;
         word-spacing: normal;
+      }
+      .summary {
+        color: var(--informationitem-summary-color, #888);
+        font-size: 14px;
+      }
+      .summary, .tuning {
+        padding: 10px;
       }
     </style>
 
     <div class="">
       <h3>[[info.name]]</h3>
-      <div class="extra">
+      <div class="summary">
+        <!-- TODO give possibility to toggle this -->
+        <p>[[info.summary]]</p>
+      </div>
+      <div class="tuning">
         ...
-        <!-- TODO section used by second activity of 'play' -->
       </div>
     </div>
 

@@ -50,4 +50,27 @@ const CUSTOMEVENTS = {
    * @type {String}
    */
   UPDATE_ITEMS: 'updateitems',
+  /**
+   * @type {String}
+   */
+  PLAY_NAVIGATOR: 'changeplaystep',
+}
+
+/**
+ * Play => steps
+ * @type {Object}
+ */
+const PLAY = {
+  /**
+   * @type {String}
+   */
+  FLIPPING: 'flipping-cards',
+  /**
+   * @type {String}
+   */
+  TUNING: 'tuning-problem',
+  /**
+   * @type {String}
+   */
+  END: 'end',
 }
