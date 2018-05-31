@@ -38,13 +38,15 @@
       }
     </style>
 
-    <!-- TODO show all the cards with the possibility to flip them -->
-
-    <div id="newInfoForm">
+    <!-- <div id="newInfoForm">
       <input />
-      
+
+      TODO use the
+      <flipping-cards-form visible="[[formVisible]]" response="{{infoAdded}}">
+      </flipping-cards-form>
+
       <button on-click="_storeItem">ADD</button>
-    </div>
+    </div> -->
 
     <div id="mockNewItem" on-click="_addInfo">
       <!-- TODO svg plus -->
@@ -98,13 +100,14 @@
        */
       _addInfo() {
         // TODO show the form
-        this.$.newInfoForm.style.display = 'block';
+        // this.formVisible = true
       }
       /**
-       * Store new information item
+       * Observe new informatio added
+       * @param {Object}    item
        */
-      _storeItem() {
-        // TODO send item to API
+      _infoAddedChanged(item) {
+        // TODO add item to cards (default selected)
       }
     }
 
