@@ -6,8 +6,8 @@
       :host {
         position: relative;
         display: inline-block;
-        max-width: var(--informationitem-max-width, 200px);
-        max-height: var(--informationitem-max-height, 300px);
+        /* max-width: var(--informationitem-max-width, 200px);
+        max-height: var(--informationitem-max-height, 300px); */
         transition: all 300ms;
       }
       :host .summary {
@@ -46,7 +46,7 @@
         <p>[[info.summary]]</p>
       </div>
       <div class="tuning">
-        ...
+        <slot></slot>
       </div>
     </div>
 
@@ -80,21 +80,6 @@
             value: false,
           },
         }
-      }
-      /**
-       * Deep observers
-       */
-      static get observers() {
-        return [
-          // '_flip(info.flipped)',
-        ]
-      }
-      /**
-       * Flip card
-       * @param {Boolean}
-       */
-      _flip(flipped) {
-        this.disabled = flipped
       }
     }
 

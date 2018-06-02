@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tuning-problem test</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/ocean-eye-app/fragments/play/tuning-problem.html">
+  </head>
+  <body>
+
+    <test-fixture id="Baby">
+      <template>
+        <tuning-problem></tuning-problem>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('tuning-problem', () => {
+        let element;
+        setup(() => {
+          element = fixture('Baby');
+        });
+
+        /**
+         * Test default properties
+         */
+        test('aka baby-test', () => {
+          assert.equal(JSON.stringify(element.cards), '[]');
+          assert.typeof(element.cards, 'array');
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

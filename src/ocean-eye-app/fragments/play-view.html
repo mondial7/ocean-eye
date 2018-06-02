@@ -30,7 +30,7 @@
         selected="[[_step]]"
         attr-for-selected="data-step">
       <flipping-cards id="first" data-step="1" cards="{{informationitems}}"></flipping-cards>
-      <tuning-problem id="second" data-step="2" cards="{{informationitems}}"></tuning-problem>
+      <tuning-problem id="second" data-step="2" cards="{{selectedItems}}"></tuning-problem>
       <!-- <end-game data-step="3"></end-game> -->
     </iron-pages>
 
@@ -77,9 +77,40 @@
                 name: 'Churn Rate',
                 summary: 'Proportion of customers who leave a supplier during a given time period',
                 flipped: false,
+                actionable: 1,
+                motivation: 1,
+                leading: 1,
+                frequency: 1,
+              },
+              {
+                name: 'Churn Rate',
+                summary: 'Proportion of customers who leave a supplier during a given time period',
+                flipped: false,
+                actionable: 1,
+                motivation: 1,
+                leading: 1,
+                frequency: 1,
+              },
+              {
+                name: 'Churn Rate',
+                summary: 'Proportion of customers who leave a supplier during a given time period',
+                flipped: false,
+                actionable: 1,
+                motivation: 1,
+                leading: 1,
+                frequency: 1,
               }
             ],
           },
+          /**
+           * Selected information items
+           * Filtered from the flipping-cards
+           * @type {Array}
+           */
+          selectedItems: {
+            type: Array,
+            value: () => [],
+          }
         }
       }
       /**
@@ -88,9 +119,12 @@
       ready() {
         super.ready()
         this.$.cardsAPI.execute()
+        // set element for the tuning-problem (initially all are selected)
+        this._updateSelectedItems()
         // listen to items/cards updates
         this.$.first.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
-          this._informationitemsUpdated(e.details)
+          this._informationitemUpdated(e.detail)
+          this._updateSelectedItems()
         })
         // listen to player navigator
         this.$.first.addEventListener(CUSTOMEVENTS.PLAY_NAVIGATOR, e => {
@@ -104,9 +138,17 @@
        * Listen to information items update activity
        * @param {Object}   activity
        */
-      _informationitemsUpdated(activity) {
+      _informationitemUpdated(activity) {
         // update logs
         this.logs.push({ activity, time: new Date() })
+      }
+      /**
+       * Update selected items for the 'tuning-problem'
+       */
+      _updateSelectedItems() {
+        this.set('selectedItems', this.informationitems.filter(x => {
+          return !x.flipped
+        }))
       }
       /**
        * Navigate play steps

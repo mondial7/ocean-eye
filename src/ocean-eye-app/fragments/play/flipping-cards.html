@@ -16,11 +16,14 @@
       #mockNewItem {
         min-height: 200px;
         min-width: 150px;
+        max-width: 230px;
         background-color: #fff;
         box-shadow: 0px 0px 3px #999;
         cursor: pointer;
         vertical-align: middle;
         box-sizing: border-box;
+        margin-right: 20px;
+        margin-bottom: 15px;
       }
       #mockNewItem {
         display: inline-block;
@@ -41,6 +44,10 @@
         bottom: var(--page-padding, 15px);
       }
     </style>
+
+    <h4>Flipping Cards</h4>
+    <hr />
+    <br />
 
     <!-- <div id="newInfoForm">
       <input />
@@ -102,6 +109,10 @@
         element.info.flipped = !element.info.flipped
         // flip visualization
         element.disabled = element.info.flipped
+        // notify change to play-view
+        this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.UPDATE_ITEMS, {
+          detail: { item: element.info }
+        }))
       }
       /**
        * Add new informationitem

@@ -1,0 +1,156 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../../../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="../../../helpers/ocean-eye-informationitem.html">
+<link rel="import" href="../../../helpers/ocean-eye-config.html">
+
+<dom-module id="tuning-problem">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        padding-bottom: 60px;
+      }
+      ocean-eye-informationitem {
+        /* display: inline-block; */
+        width: 100%;
+        max-width: 550px;
+        margin-right: 20px;
+        margin-bottom: 15px;
+        background-color: #fff;
+        box-shadow: 0px 0px 3px #999;
+        vertical-align: middle;
+        box-sizing: border-box;
+      }
+      #fabWrapper {
+        position: fixed;
+        left: var(--page-padding, 15px);
+        bottom: var(--page-padding, 15px);
+      }
+      paper-slider {
+        display: inline-block;
+        width: calc(100% - 180px);
+        vertical-align: middle;
+        cursor: pointer;
+        --paper-slider-knob-start-color: #3466d6;
+        --paper-slider-knob-start-border-color: #3466d6;
+        --paper-slider-pin-start-color: #3466d6;
+      }
+      label {
+        display: inline-block;
+        width: 150px;
+        font-size: 14px;
+      }
+      p {
+        margin: 0px;
+      }
+    </style>
+
+    <h4>Tuning Problem</h4>
+    <hr />
+    <br />
+
+    <dom-repeat items="[[cards]]" as="item">
+      <template>
+        <ocean-eye-informationitem info="[[item]]">
+          <p>
+            <label on-click="_toastA">Actionable</label>
+            <paper-slider max="7" min="1" pin="true"
+              value="{{item.actionable}}"></paper-slider>
+          </p>
+          <p>
+            <label on-click="_toastM">Team Motivation</label>
+            <paper-slider max="7" min="1" pin="true"
+              value="{{item.motivation}}"></paper-slider>
+          </p>
+          <p>
+            <label on-click="_toastL">Leading</label>
+            <paper-slider max="7" min="1" pin="true"
+              value="{{item.leading}}"></paper-slider>
+          </p>
+          <p>
+            <label on-click="_toastF">Update Frequency</label>
+            <paper-slider max="7" min="1" pin="true"
+              value="{{item.frequency}}"></paper-slider>
+          </p>
+        </ocean-eye-informationitem>
+      </template>
+    </dom-repeat>
+
+    <span on-click="_prevStep" id="fabWrapper">
+      <paper-fab icon="arrow-back"></paper-fab>
+    </span>
+
+    <paper-toast id="toast"
+      vertical-align="top"
+      horizontal-align="center" text="🌊"></paper-toast>
+
+  </template>
+
+  <script>
+    class TuningProblem extends Polymer.Element {
+      static get is() { return 'tuning-problem'; }
+      static get properties() {
+        return {
+          /**
+           * Cards || Information items
+           * @type {Array}   [{ name: String, flipped: Boolean,... }]
+           */
+          cards: {
+            type: Array,
+            notify: true,
+            reflectToAttribute: true,
+            value: () => [],
+          },
+        }
+      }
+      /**
+       * Move to the next step -> 'flipping-cards'
+       * Broadcast event listened by 'play-view'
+       */
+      _prevStep() {
+        this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.PLAY_NAVIGATOR, {
+          detail: { step: PLAY.FLIPPING }
+        }))
+      }
+      /**
+       * Toast trigger
+       * @param {String}    text
+       */
+      _toast(text) {
+        this.$.toast.text = text
+        this.$.toast.open()
+      }
+      /**
+       * Actionable toast
+       */
+      _toastA() {
+        this._toast('Is it an actionable information?')
+      }
+      /**
+       * Motivation toast
+       */
+      _toastM() {
+        this._toast('Does it boost team motivation?')
+      }
+      /**
+       * Leading toast
+       */
+      _toastL() {
+        this._toast('Is it a leading information?')
+      }
+      /**
+       * Update Frequency toast
+       */
+      _toastF() {
+        this._toast('Does it update frequently?')
+      }
+    }
+
+    window.customElements.define(TuningProblem.is, TuningProblem);
+  </script>
+</dom-module>
