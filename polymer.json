@@ -1,4 +1,5 @@
 {
+  "basePath": "/app/dashboard/",
   "entrypoint": "index.html",
   "shell": "src/ocean-eye-app/ocean-eye-app.html",
   "lint": {
@@ -7,11 +8,13 @@
     ]
   },
   "sources": [
-    "src/**/*"
+    "src/**/*",
+    "src/**/**/*",
+    "src/**/**/**/*"
   ],
   "builds": [
-    { "preset": "es5-bundled" },
-    { "preset": "es6-bundled" },
-    { "preset": "es6-unbundled" }
+    {
+      "preset": "es5-bundled"
+    }
   ]
 }
