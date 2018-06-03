@@ -100,6 +100,9 @@
   </template>
 
   <script>
+
+    Polymer.setPassiveTouchGestures(true);
+
     class OceanEyeApp extends Polymer.Element {
       static get is() { return 'ocean-eye-app'; }
       static get properties() {
@@ -117,6 +120,7 @@
           },
           rootPath: {
             type: String,
+            value: '/ocean-eye/dashboard/',
           },
           /**
            * Collection id selected (detected by subrouter)

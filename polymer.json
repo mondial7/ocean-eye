@@ -1,9 +1,7 @@
 {
-  "basePath": "/app/dashboard/",
   "entrypoint": "index.html",
   "extraDependencies": [
-    "manifest.json",
-    "bower_components/polymer/lib/utils/settings.html"
+    "manifest.json"
   ],
   "shell": "src/ocean-eye-app/ocean-eye-app.html",
   "lint": {

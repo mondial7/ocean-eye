@@ -1,7 +1,10 @@
 {
-  "name": "ocean-eye",
-  "short_name": "ocean-eye",
+  "name": "Ocean Eye model dashboard",
+  "short_name": "Ocean Eye",
   "description": "Startup Radiator dashboard based on Ocean Eye Model",
-  "start_url": "/",
-  "display": "standalone"
+  "start_url": "/ocean-eye/dashboard/collections",
+  "scope": "/ocean-eye/",
+  "display": "standalone",
+  "background_color": "#2e3c5f",
+  "theme_color": "#2e3c5f"
 }
