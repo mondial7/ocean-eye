@@ -1,17 +1,16 @@
 {
   "basePath": "/app/dashboard/",
   "entrypoint": "index.html",
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/polymer/lib/utils/settings.html"
+  ],
   "shell": "src/ocean-eye-app/ocean-eye-app.html",
   "lint": {
     "rules": [
       "polymer-2"
     ]
   },
-  "sources": [
-    "src/**/*",
-    "src/**/**/*",
-    "src/**/**/**/*"
-  ],
   "builds": [
     {
       "preset": "es5-bundled"
