@@ -114,25 +114,29 @@
        */
       ready() {
         super.ready()
-        if (!this._localItems || this._localItems.length <= 0) {
+        if (!this._localItems || this._localItems.length <= 0 ||
+            !Array.isArray(this._localItems)) {
           // get cards from db
           this.$.cardsAPI.execute()
         } else {
           this.informationitems = this._localItems
           this._updateSelectedItems()
         }
-        // listen to items/cards updates
+        // listen to items/cards updates from flipping-cards
         this.$.first.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
           if (e.detail.items) {
-            // path to restore changes in localstorage
-            // NOTE need to understand how to notify
-            //      changes on an array item properties
-            //      to avoid this patch
-            this._localItems = e.detail.items
+            this._updateItemsEvent(e.detail.items)
+          }
+          this._informationitemUpdated(e.detail)
+          // refresh data for tuning-problem view
+          this._updateSelectedItems()
+        })
+        // listen to items/cards updates from tuning-problem
+        this.$.second.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
+          if (e.detail.items) {
             this._localItemsChanged(this._localItems)
           }
           this._informationitemUpdated(e.detail)
-          this._updateSelectedItems()
         })
         // listen to player navigator
         this.$.first.addEventListener(CUSTOMEVENTS.PLAY_NAVIGATOR, e => {
@@ -143,12 +147,27 @@
         })
       }
       /**
+       * Update Items event callback
+       * @param {Array}    items
+       */
+      _updateItemsEvent(items) {
+        if (items && items.length <= 0) return
+        // path to restore changes in localstorage
+        // NOTE need to understand how to notify
+        //      changes on an array item properties
+        //      to avoid this patch
+        this._localItems = items
+        this._localItemsChanged(this._localItems)
+      }
+      /**
        * Listen to information items update activity
        * @param {Object}   activity
        */
       _informationitemUpdated(activity) {
         // update logs
         this.logs.push({ activity, time: new Date() })
+        // update localstorage logs
+        window.localStorage.setItem('logs', JSON.stringify(this.logs))
       }
       /**
        * Update selected items for the 'tuning-problem'
@@ -194,6 +213,7 @@
         this._updateSelectedItems()
         this.informationitems = [
           {
+            id: 1,
             name: 'Churn Rate',
             summary: 'Proportion of customers who leave a supplier during a given time period',
             flipped: false,
@@ -203,6 +223,7 @@
             frequency: 1,
           },
           {
+            id: 2,
             name: 'Churn Rate',
             summary: 'Proportion of customers who leave a supplier during a given time period',
             flipped: false,
@@ -212,6 +233,7 @@
             frequency: 1,
           },
           {
+            id: 3,
             name: 'Churn Rate',
             summary: 'Proportion of customers who leave a supplier during a given time period',
             flipped: false,

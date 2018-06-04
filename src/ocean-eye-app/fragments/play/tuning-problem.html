@@ -59,22 +59,22 @@
         <ocean-eye-informationitem info="[[item]]">
           <p>
             <label on-click="_toastA">Actionable</label>
-            <paper-slider max="7" min="1" pin="true"
+            <paper-slider max="7" min="1" pin="true" on-change="_value"
               value="{{item.actionable}}"></paper-slider>
           </p>
           <p>
             <label on-click="_toastM">Team Motivation</label>
-            <paper-slider max="7" min="1" pin="true"
+            <paper-slider max="7" min="1" pin="true" on-change="_value"
               value="{{item.motivation}}"></paper-slider>
           </p>
           <p>
             <label on-click="_toastL">Leading</label>
-            <paper-slider max="7" min="1" pin="true"
+            <paper-slider max="7" min="1" pin="true" on-change="_value"
               value="{{item.leading}}"></paper-slider>
           </p>
           <p>
             <label on-click="_toastF">Update Frequency</label>
-            <paper-slider max="7" min="1" pin="true"
+            <paper-slider max="7" min="1" pin="true" on-change="_value"
               value="{{item.frequency}}"></paper-slider>
           </p>
         </ocean-eye-informationitem>
@@ -148,6 +148,15 @@
        */
       _toastF() {
         this._toast('Does it update frequently?')
+      }
+      /**
+       * Broadcast change of value
+       */
+      _value(e) {
+        // notify change to play-view
+        this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.UPDATE_ITEMS, {
+          detail: { item: e.model.item, items: this.cards }
+        }))
       }
     }
 
