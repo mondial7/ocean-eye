@@ -117,7 +117,7 @@
         if (!this.$.request || !params) return
         // assign parameters to ajax request
         if (method === 'POST') {
-          this.$.request.contentType = 'application/json'
+          this.$.request.contentType = 'application/x-www-form-urlencoded'
           this.$.request.body = params
         } else {
           this.$.request.params = params
@@ -132,10 +132,9 @@
         // catch API errors
         if (req.detail.response.status === 'ERROR') {
           console.warn(this.endpoint, req.detail.response)
-        } else {
-          // set response
-          this.response = req.detail.response
         }
+        // set response
+        this.response = req.detail.response
       }
 
     }
