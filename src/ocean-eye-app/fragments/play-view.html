@@ -26,7 +26,7 @@
     <ocean-api
       id="cardsAPI"
       endpoint="play/cards"
-      response="{{informationitems}}"></ocean-api>
+      response="{{_cardsResponse}}"></ocean-api>
 
     <!-- TODO logger to store activities
     <ocean-api
@@ -74,41 +74,12 @@
             value: () => [],
           },
           /**
-           * InformationItems || Cards
-           * @type {Array}
+           * Cards API response
+           * @type {Object}
            */
-          informationitems: {
-            type: Array,
-            value: () => [
-              // TODO demo only
-              {
-                name: 'Churn Rate',
-                summary: 'Proportion of customers who leave a supplier during a given time period',
-                flipped: false,
-                actionable: 1,
-                motivation: 1,
-                leading: 1,
-                frequency: 1,
-              },
-              {
-                name: 'Churn Rate',
-                summary: 'Proportion of customers who leave a supplier during a given time period',
-                flipped: false,
-                actionable: 1,
-                motivation: 1,
-                leading: 1,
-                frequency: 1,
-              },
-              {
-                name: 'Churn Rate',
-                summary: 'Proportion of customers who leave a supplier during a given time period',
-                flipped: false,
-                actionable: 1,
-                motivation: 1,
-                leading: 1,
-                frequency: 1,
-              }
-            ],
+          _cardsResponse: {
+            type: Object,
+            observer: '_cardsResponseChanged',
           },
           /**
            * Selected information items
@@ -118,7 +89,24 @@
           selectedItems: {
             type: Array,
             value: () => [],
-          }
+          },
+          /**
+           * LocalStorage
+           * @type {Object}
+           */
+          _localItems: {
+            type: Object,
+            value: () => {
+              let items = []
+              try {
+                items = JSON.parse(window.localStorage.getItem('game'))
+              } catch (e) {
+                console.warn(e)
+              }
+              return items
+            },
+            observer: '_localItemsChanged',
+          },
         }
       }
       /**
@@ -126,11 +114,23 @@
        */
       ready() {
         super.ready()
-        this.$.cardsAPI.execute()
-        // set element for the tuning-problem (initially all are selected)
-        this._updateSelectedItems()
+        if (!this._localItems || this._localItems.length <= 0) {
+          // get cards from db
+          this.$.cardsAPI.execute()
+        } else {
+          this.informationitems = this._localItems
+          this._updateSelectedItems()
+        }
         // listen to items/cards updates
         this.$.first.addEventListener(CUSTOMEVENTS.UPDATE_ITEMS, e => {
+          if (e.detail.items) {
+            // path to restore changes in localstorage
+            // NOTE need to understand how to notify
+            //      changes on an array item properties
+            //      to avoid this patch
+            this._localItems = e.detail.items
+            this._localItemsChanged(this._localItems)
+          }
           this._informationitemUpdated(e.detail)
           this._updateSelectedItems()
         })
@@ -176,7 +176,60 @@
             this._step = 1
         }
       }
-
+      /**
+       * Handle API response
+       * @param {Object}
+       */
+      _cardsResponseChanged(response) {
+        if (response.status === 'OK') {
+          if (response.data.length > 0) {
+            this.informationitems = response.data
+            this._localItems = response.data
+            // set element for the tuning-problem (initially all are selected)
+          } else {
+            console.warn('API cards response', response.data)
+          }
+        }
+        // TODO demo only
+        this._updateSelectedItems()
+        this.informationitems = [
+          {
+            name: 'Churn Rate',
+            summary: 'Proportion of customers who leave a supplier during a given time period',
+            flipped: false,
+            actionable: 1,
+            motivation: 1,
+            leading: 1,
+            frequency: 1,
+          },
+          {
+            name: 'Churn Rate',
+            summary: 'Proportion of customers who leave a supplier during a given time period',
+            flipped: false,
+            actionable: 1,
+            motivation: 1,
+            leading: 1,
+            frequency: 1,
+          },
+          {
+            name: 'Churn Rate',
+            summary: 'Proportion of customers who leave a supplier during a given time period',
+            flipped: false,
+            actionable: 1,
+            motivation: 1,
+            leading: 1,
+            frequency: 1,
+          }
+        ]
+        this._localItems = this.informationitems
+      }
+      /**
+       * Observer for localstorage
+       * @param {Array}   items
+       */
+      _localItemsChanged(items) {
+        window.localStorage.setItem('game', JSON.stringify(items))
+      }
     }
 
     window.customElements.define(PlayView.is, PlayView);

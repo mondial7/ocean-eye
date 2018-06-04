@@ -81,6 +81,11 @@
           },
         }
       }
+      ready() {
+        super.ready()
+        // disable according to 'flipped' property
+        this.disabled = this.info && this.info.flipped === true
+      }
     }
 
     window.customElements.define(OceanEyeInformationitem.is, OceanEyeInformationitem);

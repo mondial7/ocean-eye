@@ -111,7 +111,7 @@
         element.disabled = element.info.flipped
         // notify change to play-view
         this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.UPDATE_ITEMS, {
-          detail: { item: element.info }
+          detail: { item: element.info, items: this.cards }
         }))
       }
       /**
