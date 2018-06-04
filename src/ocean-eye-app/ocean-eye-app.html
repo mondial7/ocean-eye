@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="../helpers/ocean-eye-config.html">
+<link rel="import" href="../helpers/logout-controller.html">
 
 <link rel="lazy-import" href="fragments/collections-view.html">
 <link rel="lazy-import" href="fragments/play-view.html">
@@ -97,6 +98,8 @@
       <play-view name="play"></play-view>
     </iron-pages>
 
+    <logout-controller id="logout"></logout-controller>
+
   </template>
 
   <script>
@@ -160,6 +163,10 @@
                  .addEventListener(CUSTOMEVENTS.CHANGE_PAGE, e => {
           this.page = e.detail.page ? e.detail.page : this.page
         })
+        // logout listener
+        this.$.logout.addEventListener(CUSTOMEVENTS.LOGGED_OUT, e => {
+          window.location = window.location.origin+'/ocean-eye/'
+        })
       }
       /**
        * Router observer
@@ -167,10 +174,6 @@
        * @param {String} page
        */
       _routePageChanged(page) {
-        if (page === PAGE.LOGOUT) {
-          // redirect to logout page
-          window.location = `${this.rootPath}/${PAGE.LOGOUT}`
-        }
         // fallback to collections view on first loading
         this.page = page || PAGE.COLLECTIONS;
         // NOTE patch to reset the potentially selected collection
@@ -239,7 +242,7 @@
        * Logout
        */
       _logout() {
-        this.page = PAGE.LOGOUT
+        this.$.logout.logout()
       }
     }
 

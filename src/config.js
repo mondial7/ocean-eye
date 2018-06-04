@@ -54,6 +54,14 @@ const CUSTOMEVENTS = {
    * @type {String}
    */
   PLAY_NAVIGATOR: 'changeplaystep',
+  /**
+   * @type {String}
+   */
+  LOGGED_OUT: 'logged-out',
+  /**
+   * @type {String}
+   */
+  LOGGING_ERROR: 'logging-error',
 }
 
 /**

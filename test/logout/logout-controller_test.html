@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>logout-controller test</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/helpers/logout-controller.html">
+  </head>
+  <body>
+
+    <test-fixture id="Baby">
+      <template>
+        <logout-controller></logout-controller>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('logout-controller', () => {
+        let element;
+        setup(() => {
+          element = fixture('Baby');
+        });
+
+        /**
+         * Test default properties
+         */
+        test('aka baby-test', () => {
+          assert.equal(element.status, 'loggedin');
+        });
+
+        test('perform logout', (done) => {
+          element.addEventListener('logging-error', event => {
+            assert.equal(element.status, 'loggedin');
+            done();
+          });
+          element.logout();
+          assert.equal(element.status, 'loggingout');
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

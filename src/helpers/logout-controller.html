@@ -1,0 +1,73 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="ocean-api.html">
+<link rel="import" href="ocean-eye-config.html">
+
+<dom-module id="logout-controller">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+
+    <ocean-api
+      id="apiLogout"
+      endpoint="auth/logout"
+      response="{{response}}"></ocean-api>
+
+  </template>
+
+  <script>
+    class LogoutController extends Polymer.Element {
+      static get is() { return 'logout-controller'; }
+      static get properties() {
+        return {
+          /**
+           * Status => default 'loggedin' since dashboard can be access
+           *           by logged users only
+           * @type {String}   loggedin | loggedout | loggingout
+           */
+          status: {
+            type: String,
+            value: 'loggedin',
+          },
+          /**
+           * API response
+           * @type {Object}
+           */
+          response: {
+            type: Object,
+            observer: '_responseChanged',
+          }
+        }
+      }
+      /**
+       * Trigger logout
+       */
+      logout() {
+        // trigger ajax call to API
+        this.$.apiLogout.execute()
+        this.status = 'loggingout'
+      }
+      /**
+       * Listen to response
+       * @param {Object}    response
+       */
+      _responseChanged(response) {
+        if (response.status === 'OK'){
+          // trigger custom event
+          this.status = 'loggedout'
+          this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.LOGGED_OUT, {}))
+        } else if (response.details) {
+          console.warn(response.details)
+          this.status = 'loggedin'
+          this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.LOGGING_ERROR, {}))
+        }
+      }
+    }
+
+    window.customElements.define(LogoutController.is, LogoutController);
+  </script>
+</dom-module>
