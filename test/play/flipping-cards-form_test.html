@@ -4,23 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>tuning-problem test</title>
+    <title>flipping-cards-form test</title>
 
     <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../../src/ocean-eye-app/fragments/play/tuning-problem.html">
+    <link rel="import" href="../../src/ocean-eye-app/fragments/play/flipping-cards-form.html">
   </head>
   <body>
 
     <test-fixture id="Baby">
       <template>
-        <tuning-problem></tuning-problem>
+        <flipping-cards-form></flipping-cards-form>
       </template>
     </test-fixture>
 
     <script>
-      suite('tuning-problem', () => {
+      suite('flipping-cards-form', () => {
         let element;
         setup(() => {
           element = fixture('Baby');
@@ -30,8 +30,8 @@
          * Test default properties
          */
         test('aka baby-test', () => {
-          assert.equal(JSON.stringify(element.cards), '[]');
-          assert.isArray(element.cards);
+          assert.equal(element.visible, false);
+          assert.equal(element.response, undefined);
         });
 
       });
