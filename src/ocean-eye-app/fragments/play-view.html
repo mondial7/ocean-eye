@@ -67,6 +67,7 @@
           },
           /**
            * Logs -> track user activity
+           * NOTE logs are overriden at each page reload
            * @type {Array}
            */
           logs: {
@@ -127,7 +128,9 @@
           if (e.detail.items) {
             this._updateItemsEvent(e.detail.items)
           }
-          this._informationitemUpdated(e.detail)
+          if (e.detail.item) {
+            this._informationitemUpdated(e.detail.item)
+          }
           // refresh data for tuning-problem view
           this._updateSelectedItems()
         })
@@ -136,7 +139,9 @@
           if (e.detail.items) {
             this._localItemsChanged(this._localItems)
           }
-          this._informationitemUpdated(e.detail)
+          if (e.detail.item) {
+            this._informationitemUpdated(e.detail.item)
+          }
         })
         // listen to player navigator
         this.$.first.addEventListener(CUSTOMEVENTS.PLAY_NAVIGATOR, e => {
@@ -164,6 +169,7 @@
        * @param {Object}   activity
        */
       _informationitemUpdated(activity) {
+        // TODO make logs more verbose
         // update logs
         this.logs.push({ activity, time: new Date() })
         // update localstorage logs
