@@ -1,13 +1,42 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
-<!-- TODO paper inputs -->
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-radio-group/paper-radio-group.html">
 
-<link rel="import" href="../../../helpers/ocean-eye-api.html">
+<link rel="import" href="../../../helpers/ocean-api.html">
 
 <dom-module id="flipping-cards-form">
   <template>
     <style>
       :host {
         display: block;
+        height: auto;
+        overflow: hidden;
+        max-height: 0px;
+        transition: all 300ms;
+        background: #fbfbfb;
+        box-sizing: border-box;
+      }
+      :host([visible]) {
+        max-height: 999px !important;
+        padding: 25px;
+        margin-bottom: 50px;
+      }
+      paper-textarea {
+        padding: 15px 0px;
+      }
+      .submitWrapper {
+        padding-top: 15px;
+      }
+      paper-button[raised] {
+        margin: 0px;
+      }
+      .red {
+        float: right;
+        color: red;
+        font-size: 12px;
+        font-weight: 400 !important;
       }
     </style>
 
@@ -18,9 +47,36 @@
       params="[[params]]"
       response="{{response}}"></ocean-api>
 
-    <input />
-    <!-- TODO inputs ... -->
-    <button on-click="_storeItem">ADD</button>
+    <paper-input
+      id="name"
+      type="text"
+      label="Name"
+      value="{{name}}"
+      autocomplete
+      required>
+    </paper-input>
+    <paper-textarea
+      id="summary"
+      type="text"
+      label="Summary"
+      value="{{summary}}"
+      autocomplete
+      required>
+    </paper-textarea>
+    <label id="dimensionLabel">Dimension:</label>
+    <paper-radio-group id="dimension"
+      aria-labelledby="dimensionLabel"
+      selected="{{dimension}}">
+      <paper-radio-button name="product">Product</paper-radio-button>
+      <paper-radio-button name="customer">Customer</paper-radio-button>
+      <paper-radio-button name="resource">Resource</paper-radio-button>
+    </paper-radio-group>
+    <br>
+    <div class="submitWrapper">
+      <paper-button raised on-click="_storeItem">ADD</paper-button>
+      <paper-button on-click="_close">CLOSE</paper-button>
+      <paper-button on-click="reset" class="red">reset</paper-button>
+    </div>
 
   </template>
 
@@ -40,21 +96,87 @@
             value: false,
           },
           /**
-           * Response -> expose
+           * Expose last added item
            * @type {Object}
            */
-          response: {
+          newItem: {
             type: Object,
             notify: true,
             reflectToAttribute: true,
           },
+          /**
+           * Response
+           * @type {Object}
+           */
+          response: {
+            type: Object,
+            observer: '_responseChanged',
+          },
+          /**
+           * Name, Summary, Dimension inputs
+           * @type {String}
+           */
+          name: {
+            type: String,
+            value: '',
+          },
+          summary: {
+            type: String,
+            value: '',
+          },
+          dimension: {
+            type: String,
+            value: '',
+          },
         }
+      }
+      static get observers() {
+        return [
+          '_inputsChanged(name, summary, dimension)',
+        ]
+      }
+      /**
+       * Expose reset method
+       */
+      reset() {
+        this.name = ''
+        this.summary = ''
+        this.dimension = ''
       }
       /**
        * Store new information item
        */
       _storeItem() {
         this.$.newItemAPI.execute()
+      }
+      /**
+       * Hide form
+       */
+      _close() {
+        // this.reset()
+        this.visible = false
+      }
+      /**
+       * Observe inputs changes and set ajax parameters
+       * @param {String}    name
+       * @param {String}    summary
+       * @param {String}    dimension
+       */
+      _inputsChanged(name, summary, dimension) {
+        this.params = { name, summary, dimension }
+      }
+      /**
+       * API response changed
+       * @type {Object}
+       */
+      _responseChanged(response) {
+        if (response && response.status === 'OK') {
+          if (response.data) {
+            this.set('newItem', response.data)
+          } else {
+            console.warn('something went wrong with API response', response)
+          }
+        }
       }
     }
 

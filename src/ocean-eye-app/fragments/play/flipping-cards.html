@@ -2,6 +2,8 @@
 <link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
 
+<link rel="import" href="flipping-cards-form.html">
+
 <link rel="import" href="../../../helpers/ocean-eye-informationitem.html">
 <link rel="import" href="../../../helpers/ocean-eye-config.html">
 
@@ -26,17 +28,21 @@
         margin-bottom: 15px;
       }
       #mockNewItem {
+        position: relative;
+        width: 230px;
         display: inline-block;
-        text-align: center;
         font-size: 24px;
         color: #888;
         font-weight: 900;
         padding: 15px;
         background-color: #eee;
       }
-      #newInfoForm {
-        display: none;
+      #mockNewItem > span {
+        display: inline-block;
         position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
       }
       #fabWrapper {
         position: fixed;
@@ -49,20 +55,16 @@
     <hr />
     <br />
 
-    <!-- <div id="newInfoForm">
-      <input />
+    <flipping-cards-form
+      id="form"
+      visible="{{formVisible}}"
+      new-item="{{newItem}}">
+    </flipping-cards-form>
 
-      TODO use the
-      <flipping-cards-form visible="[[formVisible]]" response="{{infoAdded}}">
-      </flipping-cards-form>
-
-      <button on-click="_storeItem">ADD</button>
-    </div> -->
-
-    <!-- <div id="mockNewItem" on-click="_addInfo">
-      TODO svg plus
+    <div id="mockNewItem" on-click="_addInfo">
+      <!-- TODO svg plus -->
       <span>New<br>information<br>item</span>
-    </div> -->
+    </div>
 
     <dom-repeat items="[[cards]]" as="item">
       <template>
@@ -94,6 +96,23 @@
             reflectToAttribute: true,
             value: () => [],
           },
+          /**
+           * Form visibility toggle
+           * @type {Boolean}
+           */
+          formVisible: {
+            type: Boolean,
+            value: false,
+            observer: '_formVisibleChanged',
+          },
+          /**
+           * Observe new items added
+           * @type {Object}
+           */
+          newItem: {
+            type: Object,
+            observer: '_newItemChanged',
+          }
         }
       }
       /**
@@ -109,17 +128,24 @@
         element.info.flipped = !element.info.flipped
         // flip visualization
         element.disabled = element.info.flipped
+        this._notifyUpdate(element.info)
+      }
+      /**
+       * Notify an update
+       * @param {Object}    item
+       */
+      _notifyUpdate(item) {
         // notify change to play-view
         this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.UPDATE_ITEMS, {
-          detail: { item: element.info, items: this.cards }
+          detail: { item: item, items: this.cards }
         }))
       }
       /**
        * Add new informationitem
        */
       _addInfo() {
-        // TODO show the form
-        // this.formVisible = true
+        this.$.form.visible = true
+        this.$.mockNewItem.setAttribute('style','display:none');
       }
       /**
        * Observe new informatio added
@@ -127,6 +153,27 @@
        */
       _infoAddedChanged(item) {
         // TODO add item to cards (default selected)
+      }
+      /**
+       * Observe form visibility (toggle)
+       * @param {Boolean}
+       */
+      _formVisibleChanged(visible) {
+        if (!visible) {
+          this.$.mockNewItem.removeAttribute('style');
+        }
+      }
+      /**
+       * Append new added item
+       * @param {Object}    item
+       */
+      _newItemChanged(item) {
+        // reset form
+        this.$.form.reset()
+        // append item
+        this.cards.push(item)
+        // notify
+        this._notifyUpdate(item)
       }
       /**
        * Move to the next step -> 'tuning-problem'

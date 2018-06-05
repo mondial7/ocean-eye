@@ -31,7 +31,17 @@
          */
         test('aka baby-test', () => {
           assert.equal(element.visible, false);
-          assert.equal(element.response, undefined);
+          assert.isString(element.name);
+          assert.isString(element.summary);
+          assert.isString(element.dimension);
+          assert.equal(element.newItem, undefined);
+          assert.equal(
+            JSON.stringify(element.params),
+            JSON.stringify({
+              name: '',
+              summary: '',
+              dimension: '',
+            }));
         });
 
       });
