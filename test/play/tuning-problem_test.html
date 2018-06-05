@@ -32,6 +32,7 @@
         test('aka baby-test', () => {
           assert.equal(JSON.stringify(element.cards), '[]');
           assert.isArray(element.cards);
+          assert.equal(element.response, undefined);
         });
 
       });

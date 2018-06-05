@@ -62,6 +62,10 @@ const CUSTOMEVENTS = {
    * @type {String}
    */
   LOGGING_ERROR: 'logging-error',
+  /**
+   * @type {String}
+   */
+  COLLECTION_SAVED: 'collection-saved',
 }
 
 /**

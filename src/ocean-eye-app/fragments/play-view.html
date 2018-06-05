@@ -150,6 +150,15 @@
         this.$.second.addEventListener(CUSTOMEVENTS.PLAY_NAVIGATOR, e => {
           this._move(e.detail.step)
         })
+        // listen to saved collection event (bubble the event to app shell)
+        this.$.second.addEventListener(CUSTOMEVENTS.COLLECTION_SAVED, e => {
+          // reset collection -> retrieve again the item list through API
+          this.$.cardsAPI.execute()
+          // bubble event
+          this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
+            detail: { page: PAGE.COLLECTION }
+          }))
+        })
       }
       /**
        * Update Items event callback
