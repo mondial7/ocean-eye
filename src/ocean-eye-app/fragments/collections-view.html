@@ -32,7 +32,7 @@
     <ocean-api
       id="collectionListApi"
       endpoint="list/collections"
-      response="{{_collections}}"></ocean-api>
+      response="{{_collectionsResponse}}"></ocean-api>
     <ocean-api
       id="collectionDataApi"
       endpoint="collections/read"
@@ -71,6 +71,14 @@
             observer: '_collectionSelected',
           },
           /**
+           * Collections API response
+           * @type {Object}
+           */
+          _collectionsResponse: {
+            type: Object,
+            observer: '_collectionsResponseChanged',
+          },
+          /**
            * Collections list
            * @type {Array}
            */
@@ -102,6 +110,19 @@
       ready(){
         super.ready()
         this.$.collectionListApi.execute()
+      }
+      /**
+       * Handle collections list API response
+       * @param {Object}
+       */
+      _collectionsResponseChanged(response) {
+        if (response.status === 'OK') {
+          if (response.data.length > 0) {
+            this._collections = response.data
+          } else {
+            console.warn('API collections response', response.data)
+          }
+        }
       }
       /**
        * Observer for collectionId property
