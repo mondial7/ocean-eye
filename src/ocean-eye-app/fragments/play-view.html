@@ -25,7 +25,7 @@
 
     <ocean-api
       id="cardsAPI"
-      endpoint="list/items"
+      endpoint="list/informationitems"
       response="{{_cardsResponse}}"></ocean-api>
 
     <!-- TODO logger to store activities
@@ -153,10 +153,11 @@
         // listen to saved collection event (bubble the event to app shell)
         this.$.second.addEventListener(CUSTOMEVENTS.COLLECTION_SAVED, e => {
           // reset collection -> retrieve again the item list through API
+          this._localItems = []
           this.$.cardsAPI.execute()
           // bubble event
           this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
-            detail: { page: PAGE.COLLECTION }
+            detail: { page: PAGE.COLLECTIONS }
           }))
         })
       }
@@ -218,48 +219,55 @@
       _cardsResponseChanged(response) {
         if (response.status === 'OK') {
           if (response.data.length > 0) {
-            this.informationitems = response.data
-            this._localItems = response.data
+            let items = response.data.map(x => {
+              x.actionable_ = 1
+              x.motivation_ = 1
+              x.leading_ = 1
+              x.frequency_ = 1
+              return x
+            })
+            this.informationitems = items
+            this._localItems = items
             // set element for the tuning-problem (initially all are selected)
           } else {
             console.warn('API cards response', response.data)
           }
         }
-        // TODO demo only
-        this._updateSelectedItems()
-        this.informationitems = [
-          {
-            id: 1,
-            name: 'Churn Rate',
-            summary: 'Proportion of customers who leave a supplier during a given time period',
-            flipped: false,
-            actionable: 1,
-            motivation: 1,
-            leading: 1,
-            frequency: 1,
-          },
-          {
-            id: 2,
-            name: 'Churn Rate',
-            summary: 'Proportion of customers who leave a supplier during a given time period',
-            flipped: false,
-            actionable: 1,
-            motivation: 1,
-            leading: 1,
-            frequency: 1,
-          },
-          {
-            id: 3,
-            name: 'Churn Rate',
-            summary: 'Proportion of customers who leave a supplier during a given time period',
-            flipped: false,
-            actionable: 1,
-            motivation: 1,
-            leading: 1,
-            frequency: 1,
-          }
-        ]
-        this._localItems = this.informationitems
+        // // TODO demo only
+        // this._updateSelectedItems()
+        // this.informationitems = [
+        //   {
+        //     id: 1,
+        //     name: 'Churn Rate',
+        //     summary: 'Proportion of customers who leave a supplier during a given time period',
+        //     flipped: false,
+        //     actionable: 1,
+        //     motivation: 1,
+        //     leading: 1,
+        //     frequency: 1,
+        //   },
+        //   {
+        //     id: 2,
+        //     name: 'Churn Rate',
+        //     summary: 'Proportion of customers who leave a supplier during a given time period',
+        //     flipped: false,
+        //     actionable: 1,
+        //     motivation: 1,
+        //     leading: 1,
+        //     frequency: 1,
+        //   },
+        //   {
+        //     id: 3,
+        //     name: 'Churn Rate',
+        //     summary: 'Proportion of customers who leave a supplier during a given time period',
+        //     flipped: false,
+        //     actionable: 1,
+        //     motivation: 1,
+        //     leading: 1,
+        //     frequency: 1,
+        //   }
+        // ]
+        // this._localItems = this.informationitems
       }
       /**
        * Observer for localstorage

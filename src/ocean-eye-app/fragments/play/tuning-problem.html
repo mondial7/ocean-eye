@@ -78,22 +78,22 @@
           <p>
             <label on-click="_toastA">Actionable</label>
             <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.actionable}}"></paper-slider>
+              value="{{item.actionable_}}"></paper-slider>
           </p>
           <p>
             <label on-click="_toastM">Team Motivation</label>
             <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.motivation}}"></paper-slider>
+              value="{{item.motivation_}}"></paper-slider>
           </p>
           <p>
             <label on-click="_toastL">Leading</label>
             <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.leading}}"></paper-slider>
+              value="{{item.leading_}}"></paper-slider>
           </p>
           <p>
             <label on-click="_toastF">Update Frequency</label>
             <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.frequency}}"></paper-slider>
+              value="{{item.frequency_}}"></paper-slider>
           </p>
         </ocean-eye-informationitem>
       </template>
@@ -209,7 +209,22 @@
        * Trigger API
        */
       _save() {
-        this.params = { items: this.cards }
+        // format cards to comply
+        // define params to be sent
+        this.params = { items: JSON.stringify(this.cards.map(x => {
+          return {
+            id: x.id,
+            // name, summary, and related properties could be updated
+            // by another feature -> "edit item"
+            // still considering whether and how to implement it
+            // name: x.name,
+            // summary: x.summary,
+            actionable_: x.actionable_,
+            motivation_: x.motivation_,
+            leading_: x.leading_,
+            frequency_: x.frequency_,
+          }
+        })) }
         this.$.apiNewCollection.execute()
       }
       /**
