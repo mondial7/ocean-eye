@@ -163,6 +163,11 @@
                  .addEventListener(CUSTOMEVENTS.CHANGE_PAGE, e => {
           this.page = e.detail.page ? e.detail.page : this.page
         })
+        // play events listener
+        this.root.querySelector('play-view')
+                 .addEventListener(CUSTOMEVENTS.CHANGE_PAGE, e => {
+          this.page = e.detail.page ? e.detail.page : this.page
+        })
         // logout listener
         this.$.logout.addEventListener(CUSTOMEVENTS.LOGGED_OUT, e => {
           window.location = window.location.origin+'/ocean-eye/'
