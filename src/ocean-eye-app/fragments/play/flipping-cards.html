@@ -1,4 +1,5 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/mixins/mutable-data.html">
 <link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
 
@@ -67,14 +68,12 @@
       <span>New<br>information<br>item</span>
     </div>
 
-    <dom-repeat items="[[cards]]" as="item">
-      <template>
-        <ocean-eye-informationitem
-          on-click="_flip"
-          info="[[item]]"
-          summary></ocean-eye-informationitem>
-      </template>
-    </dom-repeat>
+    <template is="dom-repeat" id="list" items="[[cards]]" as="item">
+      <ocean-eye-informationitem
+        on-click="_flip"
+        info="[[item]]"
+        summary></ocean-eye-informationitem>
+    </template>
 
     <span on-click="_nextStep" id="fabWrapper">
       <paper-fab icon="arrow-forward"></paper-fab>
@@ -83,7 +82,7 @@
   </template>
 
   <script>
-    class FlippingCards extends Polymer.Element {
+    class FlippingCards extends Polymer.MutableData(Polymer.Element) {
       static get is() { return 'flipping-cards'; }
       static get properties() {
         return {
@@ -149,13 +148,6 @@
         this.$.mockNewItem.setAttribute('style','display:none');
       }
       /**
-       * Observe new informatio added
-       * @param {Object}    item
-       */
-      _infoAddedChanged(item) {
-        // TODO add item to cards (default selected)
-      }
-      /**
        * Observe form visibility (toggle)
        * @param {Boolean}
        */
@@ -172,7 +164,7 @@
         // reset form
         this.$.form.reset()
         // append item
-        this.cards.push(item)
+        this.push('cards', item)
         // notify
         this._notifyUpdate(item)
       }

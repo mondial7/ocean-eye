@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/mixins/mutable-data.html">
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../helpers/ocean-api.html">
@@ -22,7 +23,7 @@
                user-select: none;
       }
       .rules, .hints {
-        background: #fbfbfb;
+        background: #FFE082;
         padding: 10px;
       }
       .hints {
@@ -49,12 +50,12 @@
           <p><b>Hide items</b> not related to your project, <b>add missing items</b> if you feel like doing it.</p>
         </div>
         <div class="hints">
-          <p>Hint: think about the <b>stage of your startup</b> and the <b>type of product</b></p>
+          <p>Hint: think about the <b>stage of your startup</b> and the <b>type of you product</b></p>
         </div>
       </flipping-cards>
       <tuning-problem id="second" data-step="2" cards="{{selectedItems}}">
         <div class="rules">
-          <p>Assign a vote from 1 (low) to 5 (high)</p>
+          <p>Assign a vote from 1 (low) to 7 (high)</p>
         </div>
         <div class="hints">
           <p><b>Actionable</b> "changes your behaviour by helping you pick a course of action"</p>
@@ -69,7 +70,7 @@
   </template>
 
   <script>
-    class PlayView extends Polymer.Element {
+    class PlayView extends Polymer.MutableData(Polymer.Element) {
       static get is() { return 'play-view'; }
       static get properties() {
         return {
@@ -177,8 +178,10 @@
         // listen to saved collection event (bubble the event to app shell)
         this.$.second.addEventListener(CUSTOMEVENTS.COLLECTION_SAVED, e => {
           // reset collection -> retrieve again the item list through API
-          this._localItems = []
+          this.set('_localItems', [])
           this.$.cardsAPI.execute()
+          // reset game
+          this.set('_step', 1)
           // bubble event
           this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
             detail: { page: PAGE.COLLECTIONS }
@@ -195,8 +198,8 @@
         // NOTE need to understand how to notify
         //      changes on an array item properties
         //      to avoid this patch
-        this.informationitems = items // needed when a new item is created
-        this._localItems = items
+        this.set('informationitems', items) // needed when a new item is created
+        this.set('_localItems', items)
         this._localItemsChanged(this._localItems)
       }
       /**
@@ -206,7 +209,7 @@
       _informationitemUpdated(activity) {
         // TODO make logs more verbose
         // update logs
-        this.logs.push({ activity, time: new Date() })
+        this.push('logs', { activity, time: new Date() })
         // update localstorage logs
         window.localStorage.setItem('logs', JSON.stringify(this.logs))
       }
@@ -237,7 +240,7 @@
         }
       }
       /**
-       * Handle API response
+       * Handle cards list API response
        * @param {Object}
        */
       _cardsResponseChanged(response) {
@@ -251,48 +254,15 @@
               x.flipped = false
               return x
             })
-            this.informationitems = items
+            this.set('informationitems', [])
             this._localItems = items
-            // set element for the tuning-problem (initially all are selected)
+            for (let i = 0; i < items.length; i++) {
+              this.push('informationitems', items[i])
+            }
           } else {
             console.warn('API cards response', response.data)
           }
         }
-        // // TODO demo only
-        // this._updateSelectedItems()
-        // this.informationitems = [
-        //   {
-        //     id: 1,
-        //     name: 'Churn Rate',
-        //     summary: 'Proportion of customers who leave a supplier during a given time period',
-        //     flipped: false,
-        //     actionable: 1,
-        //     motivation: 1,
-        //     leading: 1,
-        //     frequency: 1,
-        //   },
-        //   {
-        //     id: 2,
-        //     name: 'Churn Rate',
-        //     summary: 'Proportion of customers who leave a supplier during a given time period',
-        //     flipped: false,
-        //     actionable: 1,
-        //     motivation: 1,
-        //     leading: 1,
-        //     frequency: 1,
-        //   },
-        //   {
-        //     id: 3,
-        //     name: 'Churn Rate',
-        //     summary: 'Proportion of customers who leave a supplier during a given time period',
-        //     flipped: false,
-        //     actionable: 1,
-        //     motivation: 1,
-        //     leading: 1,
-        //     frequency: 1,
-        //   }
-        // ]
-        // this._localItems = this.informationitems
       }
       /**
        * Observer for localstorage

@@ -1,4 +1,5 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/mixins/mutable-data.html">
 <link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../../bower_components/paper-slider/paper-slider.html">
@@ -73,32 +74,34 @@
     <hr />
     <br />
 
-    <dom-repeat items="[[cards]]" as="item">
-      <template>
-        <ocean-eye-informationitem info="[[item]]">
-          <p>
-            <label on-click="_toastA">Actionable</label>
-            <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.actionable_}}"></paper-slider>
-          </p>
-          <p>
-            <label on-click="_toastM">Team Motivation</label>
-            <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.motivation_}}"></paper-slider>
-          </p>
-          <p>
-            <label on-click="_toastL">Leading</label>
-            <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.leading_}}"></paper-slider>
-          </p>
-          <p>
-            <label on-click="_toastF">Update Frequency</label>
-            <paper-slider max="7" min="1" pin="true" on-change="_value"
-              value="{{item.frequency_}}"></paper-slider>
-          </p>
-        </ocean-eye-informationitem>
-      </template>
-    </dom-repeat>
+    <template is="dom-repeat" items="[[cards]]" as="item">
+      <ocean-eye-informationitem info="[[item]]">
+        <p>
+          <label on-click="_toastA">Actionable</label>
+          <span>[[item.actionable_]]</span>
+          <paper-slider max="7" min="1" pin="true" on-change="_value"
+            value="{{item.actionable_}}"></paper-slider>
+        </p>
+        <p>
+          <label on-click="_toastM">Team Motivation</label>
+          <span>[[item.motivation_]]</span>
+          <paper-slider max="7" min="1" pin="true" on-change="_value"
+            value="{{item.motivation_}}"></paper-slider>
+        </p>
+        <p>
+          <label on-click="_toastL">Leading</label>
+          <span>[[item.leading_]]</span>
+          <paper-slider max="7" min="1" pin="true" on-change="_value"
+            value="{{item.leading_}}"></paper-slider>
+        </p>
+        <p>
+          <label on-click="_toastF">Update Frequency</label>
+          <span>[[item.frequency_]]</span>
+          <paper-slider max="7" min="1" pin="true" on-change="_value"
+            value="{{item.frequency_}}"></paper-slider>
+        </p>
+      </ocean-eye-informationitem>
+    </template>
 
     <span on-click="_prevStep" id="fabWrapper">
       <paper-fab icon="arrow-back"></paper-fab>
@@ -126,7 +129,7 @@
   </template>
 
   <script>
-    class TuningProblem extends Polymer.Element {
+    class TuningProblem extends Polymer.MutableData(Polymer.Element) {
       static get is() { return 'tuning-problem'; }
       static get properties() {
         return {

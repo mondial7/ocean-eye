@@ -57,6 +57,9 @@
        */
       _responseChanged(response) {
         if (response.status === 'OK'){
+          // empty local storage -> play data
+          // no need to remove the logs data
+          window.localStorage.removeItem('game')
           // trigger custom event
           this.status = 'loggedout'
           this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.LOGGED_OUT, {}))
