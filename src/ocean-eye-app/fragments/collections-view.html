@@ -24,6 +24,9 @@
         right: var(--page-padding, 15px);
         bottom: var(--page-padding, 15px);
       }
+      paper-fab {
+        --paper-fab-background: var(--main-color);
+      }
       [hidden] {
         display: none !important;
       }
@@ -31,6 +34,7 @@
         background: #fbfbfb;
         padding: 10px;
         box-shadow: 0px 0px 4px #999;
+        border-radius: var(--border-radius);
       }
       .collections_list__header > h4 {
         margin: 7px;
@@ -40,6 +44,7 @@
         color: var(--negative-color);
         display: inline-block;
         margin: auto;
+        border-radius: var(--border-radius);
       }
     </style>
 
