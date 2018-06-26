@@ -37,9 +37,9 @@
       id="collectionDataApi"
       endpoint="collections/read"
       params='{"id":"[[collectionId]]"}'
-      response="{{_collection}}"></ocean-api>
+      response="{{_collectionDetailsResponse}}"></ocean-api>
 
-    <section class="collections__wrapper" hidden$="[[_collectionLoaded]]">
+    <section class="collections__wrapper" hidden$="[[!_collectionListView]]">
       <collections-list
         selected-collection-id="{{collectionId}}"
         list="[[_collections]]"></collections-list>
@@ -48,7 +48,7 @@
       </span>
     </section>
 
-    <section class="collection_view__wrapper" hidden$="[[!_collectionLoaded]]">
+    <section class="collection_view__wrapper" hidden$="[[_collectionListView]]">
       <paper-button on-click="_showList">Back</paper-button>
       <collections-details collection="[[_collection]]"></collections-details>
     </section>
@@ -66,6 +66,7 @@
            */
           collectionId: {
             type: Number,
+            value: -1,
             notify: true,
             reflectToAttribute: true,
             observer: '_collectionSelected',
@@ -79,6 +80,14 @@
             observer: '_collectionsResponseChanged',
           },
           /**
+           * Collection details API response
+           * @type {Object}
+           */
+          _collectionDetailsResponse: {
+            type: Object,
+            observer: '_collectionDetailsResponseChanged',
+          },
+          /**
            * Collections list
            * @type {Array}
            */
@@ -88,19 +97,19 @@
           },
           /**
            * Collection selected
-           * @type {Array}
+           * @type {Object}
            */
           _collection: {
             type: Object,
             observer: '_collectionChanged',
           },
           /**
-           * Loaded status of collection
+           * Inverse of loaded status of single collection details
            * @type {Boolean}
            */
-          _collectionLoaded: {
+          _collectionListView: {
             type: Boolean,
-            value: false,
+            value: true,
           },
         }
       }
@@ -127,21 +136,30 @@
       /**
        * Observer for collectionId property
        * @param {Number}
-       * @param {Number}
        */
-      _collectionSelected(id, oldId) {
+      _collectionSelected(id) {
         // execute query to retrieve collection data
-        if (id) this.$.collectionDataApi.execute()
+        if (id !== -1) this.$.collectionDataApi.execute()
+      }
+      /**
+       * Observer for collection data api callback
+       * @param {Object}
+       */
+      _collectionDetailsResponseChanged(response) {
+        if (response.status === 'OK') {
+          this._collection = response.data
+        }
       }
       /**
        * Observer for collection property
        * Handle the sections display
        * @param {Object}
-       * @param {Object}
        */
-      _collectionChanged(collection, oldCollection) {
-        this._collectionLoaded = !(collection === null ||
-                                   collection === undefined)
+      _collectionChanged(collection) {
+        console.log('collection', collection);
+        this._collectionListView = !(collection === null ||
+                                     collection === undefined ||
+                                     collection.length == 0)
       }
       /**
        * Force list view
