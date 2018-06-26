@@ -57,6 +57,7 @@
     </style>
 
     <app-location
+        id="appLocation"
         route="{{route}}"
         url-space-regex="^[[rootPath]]">
     </app-location>
@@ -157,6 +158,8 @@
        */
       ready() {
         super.ready()
+        // override the base tag path
+        this.$.appLocation.rootPath = window.location.origin+this.rootPath
         // collections events listener
         // e.g. play page selected
         this.root.querySelector('collections-view')
@@ -208,10 +211,12 @@
        * @param {String} page
        */
       _pageChanged(page) {
+        this.set('route.path', this.rootPath+page);
         Polymer.importHref(this._resolvedPageUrl(this.page), null, null, true)
+        // not needed atm
         // Push state
-        window.history.pushState({}, null, this.page)
-        window.dispatchEvent(new CustomEvent('location-changed'))
+        // window.history.pushState({}, null, this.page)
+        // window.dispatchEvent(new CustomEvent('location-changed'))
       }
       /**
        * Map page value with fragment url path
