@@ -21,6 +21,13 @@
            -ms-user-select: none;
                user-select: none;
       }
+      .rules, .hints {
+        background: #fbfbfb;
+        padding: 10px;
+      }
+      .hints {
+        margin-top: 5px;
+      }
     </style>
 
     <ocean-api
@@ -37,8 +44,25 @@
     <iron-pages
         selected="[[_step]]"
         attr-for-selected="data-step">
-      <flipping-cards id="first" data-step="1" cards="{{informationitems}}"></flipping-cards>
-      <tuning-problem id="second" data-step="2" cards="{{selectedItems}}"></tuning-problem>
+      <flipping-cards id="first" data-step="1" cards="{{informationitems}}">
+        <div class="rules">
+          <p><b>Hide items</b> not related to your project, <b>add missing items</b> if you feel like doing it.</p>
+        </div>
+        <div class="hints">
+          <p>Hint: think about the <b>stage of your startup</b> and the <b>type of product</b></p>
+        </div>
+      </flipping-cards>
+      <tuning-problem id="second" data-step="2" cards="{{selectedItems}}">
+        <div class="rules">
+          <p>Assign a vote from 1 (low) to 5 (high)</p>
+        </div>
+        <div class="hints">
+          <p><b>Actionable</b> "changes your behaviour by helping you pick a course of action"</p>
+          <p><b>Team Motivation</b> "keep motivating the team working on the project"</p>
+          <p><b>Leading</b> "gives a predictive uderstanding of the future. You still have time to act on them"</p>
+          <p><b>Update Frequency</b> "subject to changes, non-outdated, non-stable"</p>
+        </div>
+      </tuning-problem>
       <!-- <end-game data-step="3"></end-game> -->
     </iron-pages>
 
@@ -224,6 +248,7 @@
               x.motivation_ = 1
               x.leading_ = 1
               x.frequency_ = 1
+              x.flipped = false
               return x
             })
             this.informationitems = items
