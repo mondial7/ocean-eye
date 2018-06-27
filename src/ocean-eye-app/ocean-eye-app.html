@@ -175,6 +175,11 @@
         this.root.querySelector('play-view')
                  .addEventListener(CUSTOMEVENTS.CHANGE_PAGE, e => {
           this.page = e.detail.page ? e.detail.page : this.page
+          // NOTE -> patched, forced
+          if (this.page === PAGE.COLLECTIONS) {
+            // force collection list to re-execute API request
+            this.root.querySelector('collections-view').refreshList()
+          }
         })
         // logout listener
         this.$.logout.addEventListener(CUSTOMEVENTS.LOGGED_OUT, e => {

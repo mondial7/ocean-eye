@@ -50,6 +50,11 @@
         right: var(--page-padding, 15px);
         bottom: var(--page-padding, 15px);
       }
+      #fabWrapperHome {
+        position: fixed;
+        left: var(--page-padding, 15px);
+        bottom: var(--page-padding, 15px);
+      }
       paper-fab {
         --paper-fab-background: var(--main-color);
       }
@@ -78,6 +83,9 @@
         summary></ocean-eye-informationitem>
     </template>
 
+    <span on-click="_backHome" id="fabWrapperHome">
+      <paper-fab icon="home"></paper-fab>
+    </span>
     <span on-click="_nextStep" id="fabWrapper">
       <paper-fab icon="arrow-forward"></paper-fab>
     </span>
@@ -178,6 +186,14 @@
       _nextStep() {
         this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.PLAY_NAVIGATOR, {
           detail: { step: PLAY.TUNING }
+        }))
+      }
+      /**
+       * Go back to collections list view
+       */
+      _backHome() {
+        this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
+          detail: { page: PAGE.COLLECTIONS }
         }))
       }
     }

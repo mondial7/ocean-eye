@@ -63,6 +63,7 @@
         <h4>Play and define a new collection of information</h4>
         <paper-button on-click="_play">New collection</paper-button>
       </div>
+      <br />
       <collections-list
         selected-collection-id="{{collectionId}}"
         list="[[_collections]]"></collections-list>
@@ -141,7 +142,7 @@
        */
       ready(){
         super.ready()
-        this.$.collectionListApi.execute()
+        this.refreshList()
       }
       /**
        * Handle collections list API response
@@ -150,7 +151,24 @@
       _collectionsResponseChanged(response) {
         if (response.status === 'OK') {
           if (response.data.length > 0) {
-            this._collections = response.data
+            this._collections = response.data.map(x => {
+              // This format might be evaluate on intervals
+              // evaluate ages
+              let updated = (new Date(x.updated))
+              updated.setHours(updated.getHours()+2)
+              let age = Date.now() - updated.getTime()
+              const dayms = 86400000
+              const hourms = 3600000
+              // more than one day, we show the days otherwise mitutes
+              if (age > dayms) {
+                x.age = `${Math.round(age / 86400000)} days ago`
+              } else if (age > hourms) {
+                x.age = `${Math.round(age / 3600000)} hours ago`
+              } else {
+                x.age = 'now'
+              }
+              return x
+            })
           } else {
             console.warn('API collections response', response.data)
           }
@@ -161,8 +179,9 @@
        * @param {Number}
        */
       _collectionSelected(id) {
+        console.log(id);
         // execute query to retrieve collection data
-        if (id & id !== -1) this.$.collectionDataApi.execute()
+        if (id && id !== -1) this.$.collectionDataApi.execute()
       }
       /**
        * Observer for collection data api callback
@@ -200,6 +219,12 @@
         this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
           detail: { page: PAGE.PLAY }
         }))
+      }
+      /**
+       * Refresh list, calling APIs
+       */
+      refreshList() {
+        this.$.collectionListApi.execute()
       }
     }
 

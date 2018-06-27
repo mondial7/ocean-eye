@@ -1,40 +1,69 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<!-- <link rel="import" href="../../../../bower_components/paper-item/paper-item.html"> -->
 <link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<!-- <link rel="import" href="../../../../bower_components/iron-list/iron-list.html"> -->
 <!-- <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icon/iron-icon.html"> -->
 
 <dom-module id="collections-list">
   <template>
     <style>
+      * {
+        box-sizing: border-box;
+      }
       :host {
         display: block;
+        /* text-align: center; */
+      }
+      .box {
+        display: inline-block;
+        text-align: left;
+        padding: 10px;
+        margin: 15px 7px;
+        background: #fbfbfb;
+        min-width: 250px;
+        width: auto;
+        overflow: hidden;
+        /* height: 60px; */
+        line-height: 30px;
+      }
+      .box > div:nth-child(3) {
+        text-align: right;
+      }
+      paper-button {
+        text-align: center;
+        display: inline-block;
+        padding: 0px;
+        /* color: var(--paper-pink-a200); */
+        --paper-button-ink-color: var(--main-color, navy);
       }
     </style>
 
-    <iron-list>
-      <iron-selector
+    <!-- <iron-list> -->
+      <!-- <iron-selector
         attr-for-selected="data-id"
-        selected="{{selectedCollectionId}}">
-        <dom-repeat items="[[list]]" as="collection">
-          <paper-item data-id="[[collection.id]]">
-            <!-- <div class="collection_card__footer">
+        selected="{{selectedCollectionId}}"> -->
+        <template is="dom-repeat" items="[[list]]" as="collection">
+          <!-- <paper-item data-id="[[collection.id]]"> -->
+          <div class="box" data-id="[[collection.id]]">
+              <!-- <div class="collection_card__footer">
               <paper-button raised on-click="thumbUp([[collection.id]])">
                 <iron-icon icon="thumb-up"></iron-icon> [[likes]]
               </paper-button>
             </div> -->
-            <paper-item-body two-line>
-              <div>[[collection.owner]]</div>
-              <div secondary>[[collection.updated]]</div>
-            </paper-item-body>
+            <div>By: [[collection.email]]</div>
+            <div>[[collection.age]]</div>
+            <div><paper-button
+              data-id="[[collection.id]]"
+              on-tap="_showDetails">open</paper-button></div>
             <!-- TODO add events to load the page  -->
             <!-- <iron-icon icon="favorite"></iron-icon> -->
-          </paper-item>
-        </dom-repeat>
-      </iron-selector>
-    </iron-list>
+          </div>
+        </template>
+      <!-- </iron-selector> -->
+    <!-- </iron-list> -->
 
   </template>
 
@@ -62,6 +91,12 @@
             value: () => [],
           },
         }
+      }
+      /**
+       * Selected selected collection
+       */
+      _showDetails(e) {
+        this.selectedCollectionId = e.model.__data.collection.id
       }
     }
 

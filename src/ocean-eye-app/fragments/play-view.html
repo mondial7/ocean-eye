@@ -188,6 +188,12 @@
             detail: { page: PAGE.COLLECTIONS }
           }))
         })
+        // bubble event
+        this.$.first.addEventListener(CUSTOMEVENTS.CHANGE_PAGE, e => {
+          this.dispatchEvent(new CustomEvent(CUSTOMEVENTS.CHANGE_PAGE, {
+            detail: { page: PAGE.COLLECTIONS }
+          }))
+        })
       }
       /**
        * Update Items event callback
