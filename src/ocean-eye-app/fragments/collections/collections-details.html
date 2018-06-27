@@ -10,40 +10,64 @@
       :host {
         display: block;
       }
+      .informationitems__container {
+        box-sizing: border-box;
+        margin: 15px auto;
+        background: #fbfbfb;
+        border-radius: var(--border-radius);
+        padding: 15px;
+      }
+      ocean-eye-informationitem {
+        min-height: 200px;
+        min-width: 150px;
+        max-width: 230px;
+        background-color: #fff;
+        box-shadow: 0px 0px 3px #999;
+        vertical-align: middle;
+        box-sizing: border-box;
+        margin-right: 20px;
+        margin-bottom: 15px;
+      }
     </style>
 
-    <paper-item>
+    <!-- <paper-item>
       <paper-item-body two-line>
         <div>[[collection.owner]]</div>
         <div secondary>[[collection.updated]]</div>
-      </paper-item-body>
+      </paper-item-body> -->
       <!-- TODO add events to load the page  -->
       <!-- <iron-icon icon="favorite"></iron-icon> -->
-    </paper-item>
-    <paper-item>
+    <!-- </paper-item> -->
+    <!-- <paper-item>
       <p>[[collection.notes]]</p>
-    </paper-item>
+    </paper-item> -->
     <div class="informationitems__wrapper">
       <div class="informationitems__container informationitems__container--product">
-        <dom-repeat items="[[collection.informationitems.product]]">
+        <h4>Product</h4>
+        <template is="dom-repeat" items="[[collection.informationitems.product]]">
           <ocean-eye-informationitem
             info="[[item]]"
+            results
             summary></ocean-eye-informationitem>
-        </dom-repeat>
+        </template>
       </div>
       <div class="informationitems__container informationitems__container--resources">
-        <dom-repeat items="[[collection.informationitems.resources]]">
+        <h4>Resources</h4>
+        <template is="dom-repeat" items="[[collection.informationitems.resource]]">
           <ocean-eye-informationitem
             info="[[item]]"
+            results
             summary></ocean-eye-informationitem>
-        </dom-repeat>
+        </template>
       </div>
       <div class="informationitems__container informationitems__container--customer">
-        <dom-repeat items="[[collection.informationitems.customer]]">
+        <h4>Customer</h4>
+        <template is="dom-repeat" items="[[collection.informationitems.customer]]">
           <ocean-eye-informationitem
             info="[[item]]"
+            results
             summary></ocean-eye-informationitem>
-        </dom-repeat>
+        </template>
       </div>
     </div>
 
@@ -61,15 +85,16 @@
           _collection: {
             type: Object,
             value: () => {
-              return {
-                owner: '',
-                date: '',
-                informationitems: {
-                  product: [],
-                  resources: [],
-                  customer: []
-                }
-              }
+              // return {
+              //   owner: '',
+              //   date: '',
+              //   informationitems: {
+              //     product: [],
+              //     resources: [],
+              //     customer: []
+              //   }
+              // }
+              return null
             }
           },
         }

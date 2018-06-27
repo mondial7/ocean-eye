@@ -55,7 +55,7 @@
     <ocean-api
       id="collectionDataApi"
       endpoint="collections/read"
-      params='{"id":"[[collectionId]]"}'
+      params=''
       response="{{_collectionDetailsResponse}}"></ocean-api>
 
     <section class="collections__wrapper" hidden$="[[!_collectionListView]]">
@@ -63,6 +63,12 @@
         <h4>Play and define a new collection of information</h4>
         <paper-button on-click="_play">New collection</paper-button>
       </div>
+      <br />
+      <!-- <br />
+      <div class="">
+        <collections-details collection="[[_collection]]"></collections-details>
+      </div> -->
+      <br />
       <br />
       <collections-list
         selected-collection-id="{{collectionId}}"
@@ -73,7 +79,9 @@
     </section>
 
     <section class="collection_view__wrapper" hidden$="[[_collectionListView]]">
-      <paper-button on-click="_showList">Back</paper-button>
+      <br />
+      <paper-button raised on-click="_showList">Back</paper-button>
+      <hr />
       <collections-details collection="[[_collection]]"></collections-details>
     </section>
 
@@ -181,7 +189,12 @@
       _collectionSelected(id) {
         console.log(id);
         // execute query to retrieve collection data
-        if (id && id !== -1) this.$.collectionDataApi.execute()
+        if (id && id !== -1) {
+          // set parameters
+          this.$.collectionDataApi.params = { id }
+          // execute api call
+          this.$.collectionDataApi.execute()
+        }
       }
       /**
        * Observer for collection data api callback
@@ -189,7 +202,34 @@
        */
       _collectionDetailsResponseChanged(response) {
         if (response.status === 'OK') {
-          this._collection = response.data
+          //
+          // Ocean Eye selection module
+          // sort and pick first 7 items per category
+          //
+          // number of selectable items per category
+          const N = 7
+          // sort function
+          let s = (a, b) => a.total < b.total
+          // evaluate total
+          let data = response.data.map(x => {
+            x.total = parseInt(x.actionable_) + parseInt(x.motivation_) +
+                      parseInt(x.leading_) + parseInt(x.frequency_)
+            return x
+          })
+          console.log(data);
+          let customer  = data.filter(x => x.dimension === 'customer').sort(s)
+          let product   = data.filter(x => x.dimension === 'product').sort(s)
+          let resource  = data.filter(x => x.dimension === 'resource').sort(s)
+          this._collection = {
+            informationitems: {
+              customer: JSON.parse(JSON.stringify(customer)).slice(0, N),
+              product: JSON.parse(JSON.stringify(product)).slice(0, N),
+              resource: JSON.parse(JSON.stringify(resource)).slice(0, N)
+            }
+          }
+          console.log(this.collectionId, this._collection)
+          // show detail section
+          this._collectionListView = false
         }
       }
       /**
@@ -198,9 +238,8 @@
        * @param {Object}
        */
       _collectionChanged(collection) {
-        this._collectionListView = !(collection === null ||
-                                     collection === undefined ||
-                                     collection.length == 0)
+        // this._collectionListView = (collection !== null &&
+        //                             collection !== undefined)
       }
       /**
        * Force list view
@@ -208,6 +247,8 @@
        */
       _showList() {
         this._collection = null
+        this._collectionListView = true
+        this.collectionId = -1
       }
       /**
        * Start new collection evaluation

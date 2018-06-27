@@ -181,7 +181,9 @@
           // NOTE -> patched, forced
           if (this.page === PAGE.COLLECTIONS) {
             // force collection list to re-execute API request
-            this.root.querySelector('collections-view').refreshList()
+            let coll = this.root.querySelector('collections-view')
+            coll.refreshList()
+            coll._showList()
           }
         })
         // logout listener
@@ -254,6 +256,8 @@
        */
       _goHome() {
         this.page = PAGE.COLLECTIONS
+        // TODO refactor (duplication)
+        this.root.querySelector('collections-view')._showList()
       }
       /**
        * Navigate to profile

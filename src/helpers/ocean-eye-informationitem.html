@@ -13,6 +13,9 @@
       :host .summary {
         display: none;
       }
+      :host .results {
+        display: none;
+      }
       :host([disabled]) {
         opacity: 0.2 !important;
       }
@@ -20,6 +23,9 @@
         display: none;
       }
       :host([summary]) .summary {
+        display: block;
+      }
+      :host([results]) .results {
         display: block;
       }
       h3 {
@@ -44,6 +50,9 @@
       <div class="summary">
         <!-- TODO give possibility to toggle this -->
         <p>[[info.summary]]</p>
+        <div class="results">
+          <p>Score: [[info.total]]</p>
+        </div>
       </div>
       <div class="tuning">
         <slot></slot>
