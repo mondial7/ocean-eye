@@ -32,7 +32,7 @@
       }
       .collections_list__header {
         background: #fbfbfb;
-        padding: 10px;
+        padding: 15px;
         box-shadow: 0px 0px 4px #999;
         border-radius: var(--border-radius);
       }
@@ -46,6 +46,13 @@
         margin: auto;
         border-radius: var(--border-radius);
       }
+      .dash {
+        box-sizing: border-box;
+        background: #fff;
+        box-shadow: 0px 0px 4px #999;
+        padding: 15px;
+        border-radius: var(--border-radius);
+      }
     </style>
 
     <ocean-api
@@ -57,6 +64,11 @@
       endpoint="collections/read"
       params=''
       response="{{_collectionDetailsResponse}}"></ocean-api>
+    <!-- TODO refactor... this copy and paste -->
+    <ocean-api
+      id="recentCollectionDataApi"
+      endpoint="collections/read"
+      response="{{_recentCollectionDetailsResponse}}"></ocean-api>
 
     <section class="collections__wrapper" hidden$="[[!_collectionListView]]">
       <div class="collections_list__header">
@@ -64,11 +76,13 @@
         <paper-button on-click="_play">New collection</paper-button>
       </div>
       <br />
-      <!-- <br />
-      <div class="">
-        <collections-details collection="[[_collection]]"></collections-details>
-      </div> -->
       <br />
+      <div class="dash">
+        <collections-details collection="[[mostRecentCollection]]"></collections-details>
+      </div>
+      <br />
+      <br />
+      <h4>Collections list</h4>
       <br />
       <collections-list
         selected-collection-id="{{collectionId}}"
@@ -120,12 +134,28 @@
             observer: '_collectionDetailsResponseChanged',
           },
           /**
+           * Most recent collection details API response
+           * @type {Object}
+           */
+          _recentCollectionDetailsResponse: {
+            type: Object,
+            observer: '_recentCollectionDetailsResponseChanged',
+          },
+          /**
            * Collections list
            * @type {Array}
            */
           _collections: {
             type: Object,
             value: () => [],
+          },
+          /**
+           * Store and visualise in the dash the most recent collection
+           * @type {Object}
+           */
+          mostRecentCollection: {
+            type: Object,
+            value: () => {return {}},
           },
           /**
            * Collection selected
@@ -177,6 +207,9 @@
               }
               return x
             })
+            // set most recent collection
+            this.$.recentCollectionDataApi.params = { id: this._collections[0].id }
+            this.$.recentCollectionDataApi.execute()
           } else {
             console.warn('API collections response', response.data)
           }
@@ -216,7 +249,6 @@
                       parseInt(x.leading_) + parseInt(x.frequency_)
             return x
           })
-          console.log(data);
           let customer  = data.filter(x => x.dimension === 'customer').sort(s)
           let product   = data.filter(x => x.dimension === 'product').sort(s)
           let resource  = data.filter(x => x.dimension === 'resource').sort(s)
@@ -227,9 +259,45 @@
               resource: JSON.parse(JSON.stringify(resource)).slice(0, N)
             }
           }
-          console.log(this.collectionId, this._collection)
           // show detail section
           this._collectionListView = false
+        }
+      }
+      /**
+       * Observer for collection data api callback
+       *
+       *
+       * TODO TODO TODO copy and paste to be rectored asap
+       *
+       *
+       * @param {Object}
+       */
+      _recentCollectionDetailsResponseChanged(response) {
+        if (response.status === 'OK') {
+          //
+          // Ocean Eye selection module
+          // sort and pick first 7 items per category
+          //
+          // number of selectable items per category
+          const N = 7
+          // sort function
+          let s = (a, b) => a.total < b.total
+          // evaluate total
+          let data = response.data.map(x => {
+            x.total = parseInt(x.actionable_) + parseInt(x.motivation_) +
+                      parseInt(x.leading_) + parseInt(x.frequency_)
+            return x
+          })
+          let customer  = data.filter(x => x.dimension === 'customer').sort(s)
+          let product   = data.filter(x => x.dimension === 'product').sort(s)
+          let resource  = data.filter(x => x.dimension === 'resource').sort(s)
+          this.mostRecentCollection = {
+            informationitems: {
+              customer: JSON.parse(JSON.stringify(customer)).slice(0, N),
+              product: JSON.parse(JSON.stringify(product)).slice(0, N),
+              resource: JSON.parse(JSON.stringify(resource)).slice(0, N)
+            }
+          }
         }
       }
       /**
