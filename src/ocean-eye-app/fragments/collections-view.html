@@ -242,7 +242,7 @@
           // number of selectable items per category
           const N = 7
           // sort function
-          let s = (a, b) => a.total < b.total
+          let s = (a, b) => b.total - a.total
           // evaluate total
           let data = response.data.map(x => {
             x.total = parseInt(x.actionable_) + parseInt(x.motivation_) +
@@ -281,7 +281,7 @@
           // number of selectable items per category
           const N = 7
           // sort function
-          let s = (a, b) => a.total < b.total
+          let s = (a, b) => b.total - a.total
           // evaluate total
           let data = response.data.map(x => {
             x.total = parseInt(x.actionable_) + parseInt(x.motivation_) +
